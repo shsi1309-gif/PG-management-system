@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartPG - Weekly Food Menu</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Configure Tailwind to use Inter font and custom colors -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'pg-primary': '#FF5733', // Deep Orange/Terracotta for warmth
+                        'pg-secondary': '#33FFBD', // Mint Green for freshness
+                        'pg-dark': '#2c3e50', // Dark Navy for text and structure
+                        'pg-light': '#ecf0f1', // Light gray background
+                        'pg-accent': '#f39c12', // Goldenrod for highlights
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'custom': '0 10px 30px -15px rgba(44, 62, 80, 0.4)',
+                        'card': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom styles for aesthetic enhancements */
+        body {
+            background-color: #ecf0f1; /* pg-light equivalent */
+            font-family: 'Inter', sans-serif;
+        }
+
+        .menu-card {
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            border-radius: 12px;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(44, 62, 80, 0.2);
+        }
+
+        .day-header {
+            background-color: theme('colors.pg-primary');
+            background-image: linear-gradient(135deg, theme('colors.pg-primary') 0%, #FF8C66 100%);
+            border-radius: 10px 10px 0 0;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .meal-time-tag {
+            border-radius: 9999px; /* Full rounded corners */
+            padding: 0.25rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+    </style>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+
+    <!-- Header / Navigation Bar (Tailwind styling) -->
+    <header class="bg-white shadow-lg sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- UPDATED: Links to the homepage: index.html -->
+                <a href="index.html" class="flex-shrink-0 font-extrabold text-2xl text-pg-dark tracking-tighter">
+                    <i class="fas fa-utensils text-pg-primary mr-2"></i>SmartPG Menu
+                </a>
+                <nav class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="index.html" class="text-pg-dark hover:text-pg-primary px-3 py-2 rounded-md text-sm font-medium transition duration-150">Home</a>
+                        <a href="find-your-mate.html" class="text-pg-dark hover:text-pg-primary px-3 py-2 rounded-md text-sm font-medium transition duration-150">Find Your Mate</a>
+                        <!-- Link to this page (Food Menu) -->
+                        <a href="food-menu.html" class="bg-pg-primary text-white hover:bg-pg-accent px-3 py-2 rounded-full text-sm font-medium transition duration-150 shadow-md">Today's Special</a>
+                    </div>
+                </nav>
+                <div class="md:hidden">
+                    <button class="text-pg-dark p-2 rounded-md hover:bg-pg-light transition duration-150" onclick="toggleMenu()">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu-links" class="hidden md:hidden pb-3">
+            <a href="index.html" class="block text-pg-dark hover:text-pg-primary px-4 py-2 text-base font-medium transition duration-150">Home</a>
+            <a href="find-your-mate.html" class="block text-pg-dark hover:text-pg-primary px-4 py-2 text-base font-medium transition duration-150">Find Your Mate</a>
+            <!-- Link to this page (Food Menu) -->
+            <a href="food-menu.html" class="block bg-pg-primary text-white hover:bg-pg-accent px-4 py-2 text-base font-medium transition duration-150">Today's Special</a>
+        </div>
+    </header>
+    
+    <!-- Main Content Area -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        
+        <!-- Hero Section & Date -->
+        <div class="text-center mb-12 p-8 bg-pg-dark text-white rounded-xl shadow-custom">
+            <h1 class="text-5xl font-extrabold mb-3 tracking-tight">The Weekly Grub Plan</h1>
+            <p class="text-xl font-light text-gray-300">Nourishment, Variety, and Flavor — All Week Long.</p>
+            <div id="current-day-display" class="mt-4 text-pg-secondary text-3xl font-bold"></div>
+        </div>
+
+        <!-- Menu Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-7 gap-6">
+
+            <!-- Day 1: Monday -->
+            <div class="menu-card bg-white shadow-card col-span-1">
+                <div class="day-header">Monday</div>
+                <div class="p-4 space-y-4">
+                    <div class="border-b pb-3">
+                        <span class="meal-time-tag bg-pg-secondary/20 text-pg-dark">Breakfast</span>
+                        <ul class="list-disc list-inside mt-2 text-sm text-gray-700 space-y-1 ml-4">
+                            <li>Poha / Upma</li>
+                            <li>Tea/Coffee</li>
+                        </ul>
+                    </div>
+                    <div class="border-b pb-3">
+                        <span class="meal-time-tag bg-pg-accent/20 text-pg-dark">Lunch</span>
+                        <ul class="list-disc list-inside mt-2 text-sm text-gray-700 space-y-1 ml-4">
+                            <li>Roti (4 Pcs)</li>
+                            <li>Dal Tadka</li>
+                            <li>Aloo Matar Sabzi</li>
+                            <li>Salad</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <span class="meal-time-tag bg-pg-primary/20 text-pg-dark">Dinner</span>
+                        <ul class="list-disc list-inside mt-2 text-sm text-gray-700 space-y-1 ml-4">
+                            <li>Rice</li>
+                            <li>Rajma Curry</li>
+                            <li>Seasonal Vegetable</li>
+                            <li>Pickle</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 2: Tuesday -->
+            <div class="menu-card bg-white shadow-card col-span-1">
+                <div class="day-header">Tuesday</div>
+                <div class="p-4 space-y-4">
+                    <div class="border-b pb-3">
+                        <span class="meal-time-tag bg-pg-secondary/20 text-pg-dark">Breakfast</span>
+                        <ul class="list-disc list-inside mt-2 text-sm text-gray-700 space-y-1 ml-4">
+                            <li>Bread Butter Jam (2 Pcs)</li>
+                            <li>Boiled Egg (1 pc)</li>
+                        </ul>
+                    </div>
+                    <div class="border-b pb-3">
+                        <span class="meal-time-tag bg-pg-accent/20 text-pg-dark">Lunch</span>
+                        <ul class="list-disc list-inside mt-2 text-sm text-gray-700 space-y-1 ml-4">
+                            <li>Roti (4 Pcs)</li>
+                            <li>Chole Masala</li>
+                            <li>Bhindi Fry</li>
+                            <li>Yogurt / Curd</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <span class="meal-time-tag bg-pg-primary/20 text-pg-dark">Dinner</span>
+                        <ul class="list-disc list-inside mt-2 text-sm text-gray-700 space-y-1 ml-4">
+                            <li>Veg Pulav</li>
+                            <li>Mixed Veg Raita</li>
+                            <li>Papad</li>
+                            <li>Sweet Dish (Kheer)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Day 3: Wednesday -->
+            <div class="menu-card bg-white shadow-card col-span-1">
+                <div class="day-header">Wednesday</div>
+                <div class="p-4 space-y-4">
+                    <div class="border-b pb-3">
+                        <span class="meal-time-tag bg-pg-secondary/20 text-pg-dark">Breakfast</span>
+                        <ul class="list-disc list-inside mt-2 text-sm text-gray-700 space-y-1 ml-4">
+                            <li>Aloo Paratha (1 pc)</li>
+                            <li>Achar/Curd</li>
+                        </ul>
+                    </div>
+                    <div class="border-b pb-3">
+                        <span class="meal-time-tag bg-pg-accent/20 text-pg-dark">Lunch</span>
+                        <ul class="list-disc list-inside mt-2 text-sm text-gray-700 space-y-1 ml-4">
+                            <li>Rice</li>
+                            <li>Dal Makhani</li>
+                            <li>Gobhi Sabzi</li>
+                            <li>Salad</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <span class="meal-time-tag bg-pg-primary/20 text-pg-dark">Dinner</span>
+                        <ul class="list-disc list-inside mt-2 text-sm text-gray-700 space-y-1 ml-4">
+                            <li>Roti (4 Pcs)</li>
+                            <li>Paneer Curry (Special)</li>
+                            <li>Zeera Rice</li>
+                            <li>Pickle</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 4: Thursday -->
+            <div class="menu-card bg-white shadow-card col-span-1">
+                <div class="day-header">Thursday</div>
+                <div class="p-4 space-y-4">
+                    <div class="border-b pb-3">
+                        <span class="meal-time-tag bg-pg-secondary/20 text-pg-dark">Breakfast</span>
+                        <ul class="list-disc list-inside mt-2 text-sm text-gray-700 space-y-1 ml-4">
+                            <li>Idli Sambhar (3 Pcs)</li>
+                            <li>Coconut Chutney</li>
+                        </ul>
+                    </div>
+                    <div class="border-b pb-3">
+                        <span class="meal-time-tag bg-pg-accent/20 text-pg-dark">Lunch</span>
+                        <ul class="list-disc list-inside mt-2 text-sm text-gray-700 space-y-1 ml-4">
+                            <li>Roti (4 Pcs)</li>
+                            <li>Dal Fry</li>
+                            <li>Baigan Bharta</li>
+                            <li>Salad</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <span class="meal-time-tag bg-pg-primary/20 text-pg-dark">Dinner</span>
+                        <ul class="list-disc list-inside mt-2 text-sm text-gray-700 space-y-1 ml-4">
+                            <li>Kadhi Chawal</li>
+                            <li>Aloo Palak Sabzi</li>
+                            <li>Boondi Raita</li>
+                            <li>Papad</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 5: Friday -->
+            <div class="menu-card bg-white shadow-card col-span-1">
+                <div class="day-header">Friday</div>
+                <div class="p-4 space-y-4">
+                    <div class="border-b pb-3">
+                        <span class="meal-time-tag bg-pg-secondary/20 text-pg-dark">Breakfast</span>
+                        <ul class="list-disc list-inside mt-2 text-sm text-gray-700 space-y-1 ml-4">
+                            <li>Oats with Milk/Fruit</li>
+                            <li>Juice</li>
+                        </ul>
+                    </div>
+                    <div class="border-b pb-3">
+                        <span class="meal-time-tag bg-pg-accent/20 text-pg-dark">Lunch</span>
+                        <ul class="list-disc list-inside mt-2 text-sm text-gray-700 space-y-1 ml-4">
+                            <li>Rice</li>
+                            <li>Mix Vegetable Dal</li>
+                            <li>Lauki Kofte</li>
+                            <li>Salad</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <span class="meal-time-tag bg-pg-primary/20 text-pg-dark">Dinner</span>
+                        <ul class="list-disc list-inside mt-2 text-sm text-gray-700 space-y-1 ml-4">
+                            <li>Roti (4 Pcs)</li>
+                            <li>Mattar Paneer</li>
+                            <li>Lemon Rice</li>
+                            <li>Dessert (Ice Cream/Seasonal)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 6: Saturday -->
+            <div class="menu-card bg-white shadow-card col-span-1">
+                <div class="day-header">Saturday</div>
+                <div class="p-4 space-y-4">
+                    <div class="border-b pb-3">
+                        <span class="meal-time-tag bg-pg-secondary/20 text-pg-dark">Breakfast</span>
+                        <ul class="list-disc list-inside mt-2 text-sm text-gray-700 space-y-1 ml-4">
+                            <li>Chana Bhatura / Puri Bhaji</li>
+                            <li>Jalebi (Sweet)</li>
+                        </ul>
+                    </div>
+                    <div class="border-b pb-3">
+                        <span class="meal-time-tag bg-pg-accent/20 text-pg-dark">Lunch</span>
+                        <ul class="list-disc list-inside mt-2 text-sm text-gray-700 space-y-1 ml-4">
+                            <li>Roti (4 Pcs)</li>
+                            <li>Masoor Dal</li>
+                            <li>Capsicum Onion Curry</li>
+                            <li>Curd</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <span class="meal-time-tag bg-pg-primary/20 text-pg-dark">Dinner</span>
+                        <ul class="list-disc list-inside mt-2 text-sm text-gray-700 space-y-1 ml-4">
+                            <li>(Non-Veg Special) Chicken Curry / Soya Chaap</li>
+                            <li>Rice / Roti</li>
+                            <li>Veg Biryani (Option)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 7: Sunday -->
+            <div class="menu-card bg-white shadow-card col-span-1">
+                <div class="day-header">Sunday</div>
+                <div class="p-4 space-y-4">
+                    <div class="border-b pb-3">
+                        <span class="meal-time-tag bg-pg-secondary/20 text-pg-dark">Breakfast</span>
+                        <ul class="list-disc list-inside mt-2 text-sm text-gray-700 space-y-1 ml-4">
+                            <li>Sandwiches / Dosa</li>
+                            <li>Milkshake / Lassi</li>
+                        </ul>
+                    </div>
+                    <div class="border-b pb-3">
+                        <span class="meal-time-tag bg-pg-accent/20 text-pg-dark">Lunch</span>
+                        <ul class="list-disc list-inside mt-2 text-sm text-gray-700 space-y-1 ml-4">
+                            <li>Rice</li>
+                            <li>Arhar Dal</li>
+                            <li>Seasonal Vegetable Fry</li>
+                            <li>Salad</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <span class="meal-time-tag bg-pg-primary/20 text-pg-dark">Dinner</span>
+                        <ul class="list-disc list-inside mt-2 text-sm text-gray-700 space-y-1 ml-4">
+                            <li>Special Dinner Outing/Order Option</li>
+                            <li>(Default: Pizza Slices or Noodles)</li>
+                            <li>Soup</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Note Section -->
+        <div class="mt-12 p-6 bg-yellow-100 border-l-4 border-pg-accent rounded-lg shadow-md">
+            <h3 class="text-xl font-semibold text-pg-dark mb-2"><i class="fas fa-exclamation-circle text-pg-accent mr-2"></i>Note from the Chef</h3>
+            <p class="text-gray-700 text-sm">Menu is subject to minor changes based on seasonal availability. Non-vegetarian options are provided once a week on Saturday, with a quality vegetarian alternative always available.</p>
+        </div>
+    </div>
+
+    <!-- Footer (Simple) -->
+    <footer class="bg-pg-dark text-white p-6 text-center">
+        <p class="text-sm opacity-80">&copy; 2025 SmartPG Kitchen Services. Stay well-fed!</p>
+    </footer>
+
+    <!-- JavaScript for dynamic features -->
+    <script>
+        // Set the current day highlight
+        function updateCurrentDay() {
+            const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            // Adjust to get current day index (0=Sunday, 6=Saturday)
+            const todayIndex = new Date().getDay(); 
+            const todayName = days[todayIndex];
+            
+            // Update the hero display
+            const dayDisplay = document.getElementById('current-day-display');
+            dayDisplay.textContent = `Today is ${todayName}`;
+            
+            // Highlight the corresponding card
+            const dayHeaders = document.querySelectorAll('.day-header');
+            dayHeaders.forEach(header => {
+                // Check if the header's text content matches today's name
+                if (header.textContent === todayName) {
+                    const card = header.closest('.menu-card');
+                    // Add highlight classes
+                    card.classList.add('ring-4', 'ring-pg-secondary', 'ring-opacity-70');
+                }
+            });
+        }
+
+        // Toggle mobile menu
+        function toggleMenu() {
+            const menu = document.getElementById('mobile-menu-links');
+            menu.classList.toggle('hidden');
+        }
+
+        // Run on page load
+        window.onload = updateCurrentDay;
+    </script>
+</body>
+</html>

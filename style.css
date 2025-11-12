@@ -1,0 +1,507 @@
+/* Variables */
+:root {
+    --primary-color: #007bff; /* A fresh blue */
+    --secondary-color: #6c757d; /* Grey for secondary text */
+    --accent-color: #28a745; /* Green for success/call to action */
+    --dark-bg: #343a40;
+    --light-bg: #f8f9fa;
+    --white: #ffffff;
+    --text-dark: #212529;
+    --text-light: #f1f1f1;
+    --font-montserrat: 'Montserrat', sans-serif;
+    --font-open-sans: 'Open Sans', sans-serif;
+    --shadow-light: 0 4px 8px rgba(0, 0, 0, 0.1);
+    --shadow-medium: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Base Styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-open-sans);
+    line-height: 1.6;
+    color: var(--text-dark);
+    background-color: var(--light-bg);
+}
+
+a {
+    text-decoration: none;
+    color: var(--primary-color);
+}
+
+ul {
+    list-style: none;
+}
+
+h1, h2, h3 {
+    font-family: var(--font-montserrat);
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+/* Utility Classes */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.btn-primary {
+    display: inline-block;
+    background-color: var(--primary-color);
+    color: var(--white);
+    padding: 10px 20px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3; /* A slightly darker blue */
+}
+
+.btn-primary.large-btn {
+    padding: 15px 30px;
+    font-size: 1.1em;
+}
+
+/* Header */
+.main-header {
+    background-color: var(--white);
+    padding: 15px 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--shadow-light);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+/* NEW: Style for the logo link wrapper */
+.logo-link {
+    text-decoration: none;
+    display: inline-block;
+}
+.logo-link:hover .logo {
+    color: #0056b3;
+}
+
+
+.main-header .logo {
+    font-family: var(--font-montserrat);
+    font-size: 1.8em;
+    font-weight: 700;
+    color: var(--primary-color);
+    transition: color 0.3s ease;
+}
+
+.main-nav ul {
+    display: flex;
+}
+
+.main-nav ul li {
+    margin-left: 30px;
+}
+
+.main-nav ul li a {
+    color: var(--text-dark);
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.main-nav ul li a:hover {
+    color: var(--primary-color);
+}
+
+/* Mobile Menu Toggle */
+.menu-toggle {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+}
+
+.menu-toggle .bar {
+    height: 3px;
+    width: 25px;
+    background-color: var(--text-dark);
+    margin: 4px 0;
+    transition: 0.4s;
+}
+
+/* Hero Section (Static Image Background) */
+.hero-section {
+    position: relative;
+    height: 600px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: var(--white);
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+    background-image: url('pg.jpg'); /* Your local image */
+}
+
+/* Default/Initial Background Overlay */
+.hero-section:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.4));
+    z-index: 1;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+    padding: 20px;
+}
+
+.hero-content h1 {
+    font-size: 3.5em;
+    margin-bottom: 20px;
+    color: var(--white);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.hero-content p {
+    font-size: 1.3em;
+    margin-bottom: 30px;
+    color: var(--text-light);
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+}
+
+.hero-section .btn-primary {
+    background-color: var(--accent-color);
+}
+
+.hero-section .btn-primary:hover {
+    background-color: #218838;
+}
+
+/* Slider Navigation Dots - Hidden as hero is now static */
+.slider-nav {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    display: none;
+    gap: 10px;
+}
+
+.slider-nav .dot {
+    height: 12px;
+    width: 12px;
+    background-color: rgba(255, 255, 255, 0.6);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.slider-nav .dot.active,
+.slider-nav .dot:hover {
+    background-color: var(--white);
+    transform: scale(1.2);
+}
+
+/* Features Section */
+.features-section {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 30px;
+    padding: 60px 20px;
+    background-color: var(--white);
+    text-align: center;
+}
+
+/* Styling for the clickable feature card link wrapper */
+.feature-card-link {
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-card {
+    background-color: var(--light-bg);
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: var(--shadow-light);
+    max-width: 300px;
+    height: 100%;
+    display: flex; /* Added for vertical alignment of content */
+    flex-direction: column; /* Arrange content vertically */
+    align-items: center; /* Center items horizontally */
+}
+
+/* NEW: Style for feature card images */
+.feature-image {
+    width: 100px; /* Adjust size as needed */
+    height: 100px;
+    object-fit: contain; /* Ensures image fits without cropping */
+    margin-bottom: 20px;
+    border-radius: 50%; /* Make images round */
+    border: 3px solid var(--primary-color); /* Add a border */
+    background-color: var(--white); /* Ensure background if image has transparency */
+    padding: 5px;
+}
+
+
+/* Apply hover effect to the card when the link is hovered */
+.feature-card-link:hover .feature-card {
+    transform: translateY(-10px);
+    box-shadow: var(--shadow-medium);
+}
+
+.feature-card i {
+    font-size: 3em;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+}
+
+.feature-card h3 {
+    font-size: 1.5em;
+    margin-bottom: 15px;
+    color: var(--primary-color);
+}
+
+.feature-card p {
+    color: var(--secondary-color);
+    font-size: 0.95em;
+    flex-grow: 1; /* Allows paragraph to take remaining space */
+}
+
+/* Call to Action Section */
+.cta-section {
+    background-color: var(--primary-color); /* Fallback */
+    color: var(--white);
+    text-align: center;
+    padding: 80px 20px;
+    margin-top: 40px;
+    background-size: cover; /* Ensure background image covers */
+    background-position: center; /* Center the background image */
+    position: relative; /* For overlay */
+    overflow: hidden; /* To contain pseudo-element */
+}
+
+/* NEW: Overlay for CTA section background image */
+.cta-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Dark overlay */
+    z-index: 1;
+}
+
+.cta-section h2, .cta-section p, .cta-section .btn-primary {
+    position: relative; /* Bring content above overlay */
+    z-index: 2;
+}
+
+.cta-section h2 {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    color: var(--white);
+}
+
+.cta-section p {
+    font-size: 1.2em;
+    margin-bottom: 40px;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.cta-section .btn-primary {
+    background-color: var(--accent-color);
+}
+
+.cta-section .btn-primary:hover {
+    background-color: #218838;
+}
+
+/* Footer */
+.main-footer {
+    background-color: var(--dark-bg);
+    color: var(--text-light);
+    padding: 50px 20px 20px;
+    font-size: 0.9em;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    max-width: 1200px;
+    margin: 0 auto 30px;
+    gap: 30px;
+}
+
+.footer-col {
+    flex: 1;
+    min-width: 250px;
+    margin-bottom: 20px;
+}
+
+.footer-col h3 {
+    color: var(--primary-color);
+    margin-bottom: 20px;
+    font-size: 1.3em;
+}
+
+.footer-col p,
+.footer-col ul li a {
+    color: var(--text-light);
+    margin-bottom: 10px;
+}
+
+.footer-col ul li a:hover {
+    color: var(--primary-color);
+}
+
+.social-icons a {
+    color: var(--white);
+    font-size: 1.5em;
+    margin-right: 15px;
+    transition: color 0.3s ease;
+}
+
+.social-icons a:hover {
+    color: var(--primary-color);
+}
+
+.footer-bottom {
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 20px;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .main-header {
+        padding: 15px 30px;
+    }
+    .main-nav ul li {
+        margin-left: 20px;
+    }
+    .hero-content h1 {
+        font-size: 3em;
+    }
+    .hero-content p {
+        font-size: 1.1em;
+    }
+    .features-section {
+        padding: 40px 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-nav {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        position: absolute;
+        top: 70px;
+        left: 0;
+        background-color: var(--white);
+        box-shadow: var(--shadow-medium);
+        padding-bottom: 20px;
+    }
+
+    .main-nav.active {
+        display: flex;
+    }
+
+    .main-nav ul {
+        flex-direction: column;
+        width: 100%;
+        text-align: center;
+    }
+
+    .main-nav ul li {
+        margin: 10px 0;
+    }
+
+    .main-nav ul li a {
+        display: block;
+        padding: 10px 0;
+    }
+
+    .menu-toggle {
+        display: flex;
+    }
+
+    .hero-section {
+        height: 500px;
+    }
+
+    .hero-content h1 {
+        font-size: 2.5em;
+    }
+
+    .hero-content p {
+        font-size: 1em;
+    }
+
+    .features-section {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .feature-card {
+        max-width: 90%;
+    }
+
+    .footer-content {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .footer-col {
+        min-width: unset;
+        width: 90%;
+        text-align: center;
+    }
+
+    .social-icons {
+        margin-top: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-header .logo {
+        font-size: 1.5em;
+    }
+    .hero-section {
+        height: 400px;
+    }
+    .hero-content h1 {
+        font-size: 2em;
+    }
+    .hero-content p {
+        font-size: 0.9em;
+    }
+    .btn-primary.large-btn {
+        padding: 12px 25px;
+        font-size: 1em;
+    }
+    .cta-section h2 {
+        font-size: 2em;
+    }
+}

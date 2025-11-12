@@ -1,0 +1,164 @@
+/* Find Your Mate Page Styles (find-mate-style.css) */
+
+/* Use the variables defined in style.css */
+.mate-page-container {
+    padding-top: 50px;
+    padding-bottom: 80px;
+}
+
+/* Room Selector Area */
+.selection-area {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.selection-area h1 {
+    font-size: 2.5em;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+}
+
+.selection-area p {
+    font-size: 1.1em;
+    color: var(--secondary-color);
+    margin-bottom: 30px;
+}
+
+.room-selector {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.room-btn {
+    background-color: var(--light-bg);
+    color: var(--text-dark);
+    border: 2px solid var(--secondary-color);
+    padding: 15px 30px;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.room-btn i {
+    margin-right: 10px;
+    font-size: 1.2em;
+}
+
+.room-btn:hover {
+    border-color: var(--primary-color);
+    background-color: rgba(0, 123, 255, 0.05);
+}
+
+.room-btn.active {
+    background-color: var(--primary-color);
+    color: var(--white);
+    border-color: var(--primary-color);
+    box-shadow: var(--shadow-medium);
+    transform: translateY(-2px);
+}
+.room-btn.active:hover {
+    background-color: #0056b3;
+}
+
+
+/* Mate Profiles Area */
+.mate-list-area {
+    margin-top: 50px;
+}
+
+.mate-list-area h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: var(--text-dark);
+}
+
+.mate-cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+}
+
+.mate-card {
+    background-color: var(--white);
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: var(--shadow-light);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.mate-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.mate-card h3 {
+    color: var(--primary-color);
+    font-size: 1.4em;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.match-score {
+    font-weight: 700;
+    font-size: 1.1em;
+    margin-bottom: 15px;
+    color: var(--text-dark);
+}
+
+.match-score span {
+    color: var(--accent-color);
+    font-size: 1.2em;
+    margin-left: 5px;
+}
+
+.mate-card p {
+    font-size: 0.95em;
+    margin-bottom: 8px;
+    color: var(--secondary-color);
+}
+
+.mate-card .btn-primary {
+    margin-top: 20px;
+    width: 100%;
+    padding: 10px;
+}
+
+.mate-card .btn-primary.small-btn {
+    font-size: 0.9em;
+}
+
+.mate-card .btn-primary i {
+    margin-right: 5px;
+}
+
+.no-mates-msg {
+    grid-column: 1 / -1; /* Center message across all columns */
+    text-align: center;
+    color: var(--secondary-color);
+    font-size: 1.2em;
+    padding: 40px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .selection-area h1 {
+        font-size: 2em;
+    }
+    .room-selector {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .room-btn {
+        width: 100%;
+    }
+}

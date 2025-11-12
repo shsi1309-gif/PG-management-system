@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartPG- Find Your Perfect Co-Living Space</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <!-- Added specific style block to ensure hero section height and background properties are present -->
+    <style>
+        .hero-section {
+            /* These are the critical properties for the background image to show */
+            height: 600px; /* Ensures the section has vertical space */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            /* DIAGNOSTIC: Added background color to ensure section is visible */
+            background-color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <a href="index.html" class="logo-link"><span class="logo">SmartPG</span></a>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="index.html" class="active">Home</a></li>
+                <!-- UPDATED LINK -->
+                <li><a href="findus.html">Find Us</a></li>
+                <li><a href="find-your-mate.html">Find Your Mate</a></li>
+                <!-- CONFIRMED LINK: This links to the food menu file -->
+                <li><a href="food-menu.html">Food</a></li>
+            </ul>
+        </nav>
+        <div class="menu-toggle" id="mobile-menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </div>
+    </header>
+
+    <main>
+        <!-- DIAGNOSTIC: Using an external URL to test CSS functionality. If this image loads, your local 'pg.jpg' file path is the problem. -->
+        <section class="cta-section" style="background-image: url('pg.jpg');">
+            <h2>New room,new Vibes,same dreams</h2>
+            <p>Where instant noodles meet instant lessons of life</p>
+            <a href="findus.html" class="btn-primary large-btn">Get Started</a>
+        </section>
+
+        <section class="features-section container">
+            
+            <a href="findus.html" class="feature-card-link">
+                <div class="feature-card">
+                    <!-- Icon -->
+                    <i class="fas fa-search"></i>
+                    <h3>Easy Location Search</h3>
+                    <p>Discover your ideal PG effortlessly with our advanced search.</p>
+                </div>
+            </a>
+
+            
+            <a href="find-your-mate.html" class="feature-card-link">
+                <div class="feature-card">
+                    <!-- Icon -->
+                    <i class="fas fa-users"></i>
+                    <h3>Find Your Ideal Roommate</h3>
+                    <p>Connect with compatible living mates for a pleasant experience.</p>
+                </div>
+            </a>
+
+            
+            <a href="food-menu.html" class="feature-card-link">
+                <div class="feature-card">
+                    <!-- Icon -->
+                    <i class="fas fa-utensils"></i>
+                    <h3>Delicious & Healthy Meals</h3>
+                    <!-- Ensure feature card link is correct too -->
+                    <p>Enjoy freshly prepared, nutritious food provided by your PG.</p>
+                </div>
+            </a>
+        </section>
+
+        <!-- Background image for CTA section remains -->
+        
+    </main>
+
+    <footer class="main-footer">
+        <div class="footer-content">
+            <div class="footer-col">
+                <h3>SmartPG</h3>
+                <p>Your ultimate destination for comfortable and affordable co-living spaces.</p>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Services</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>Support</h3>
+                <ul>
+                    <li><a href="#">FAQ</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2025 SmartPG. All Rights Reserved.
+        </div>
+    </footer>
+    
+    <script src="script.js"></script>
+</body>
+</html>
