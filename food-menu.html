@@ -67,6 +67,34 @@
     </style>
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+/* Hide Google top banner */
+.goog-te-banner-frame {
+    display: none !important;
+}
+
+/* Remove spacing that Google adds to body */
+body {
+    top: 0px !important;
+}
+
+/* Hide the Google toolbar that appears at top */
+#goog-gt-tt, .goog-te-balloon-frame, .goog-te-menu-frame {
+    display: none !important;
+}
+
+/* Prevent full-page grey overlay */
+.goog-te-overlay {
+    display: none !important;
+}
+
+/* Make sure no translation tooltip appears */
+.goog-text-highlight {
+    background: none !important;
+    box-shadow: none !important;
+}
+</style>
+
 </head>
 <body>
 
@@ -81,7 +109,8 @@
                 <nav class="hidden md:block">
                     <div class="ml-10 flex items-baseline space-x-4">
                         <a href="index.html" class="text-pg-dark hover:text-pg-primary px-3 py-2 rounded-md text-sm font-medium transition duration-150">Home</a>
-                        <a href="find-your-mate.html" class="text-pg-dark hover:text-pg-primary px-3 py-2 rounded-md text-sm font-medium transition duration-150">Find Your Mate</a>
+                       
+                         <a href="findus.html" class="text-pg-dark hover:text-pg-primary px-3 py-2 rounded-md text-sm font-medium transition duration-150">findus</a>
                         <!-- Link to this page (Food Menu) -->
                         <a href="food-menu.html" class="bg-pg-primary text-white hover:bg-pg-accent px-3 py-2 rounded-full text-sm font-medium transition duration-150 shadow-md">Today's Special</a>
                     </div>
@@ -384,5 +413,63 @@
         // Run on page load
         window.onload = updateCurrentDay;
     </script>
+    <!-- Google Translate (hidden UI) -->
+<div id="google_translate_element" style="display:none;"></div>
+
+<script>
+function setCookie(name, value, days) {
+  var expires = "";
+  if (days) {
+    var date = new Date();
+    date.setTime(date.getTime() + days*24*60*60*1000);
+    expires = "; expires=" + date.toUTCString();
+  }
+  document.cookie = name + "=" + (value || "") + expires + "; path=/";
+}
+
+function applySavedLanguage(lang) {
+  if (!lang) return;
+  var trans = "/en/" + lang;
+  setCookie("googtrans", trans, 365);
+  setCookie("googtrans", trans, 365);
+}
+
+function initGoogleTranslate() {
+  new google.translate.TranslateElement(
+    { pageLanguage: "en", autoDisplay: false },
+    "google_translate_element"
+  );
+
+  var tries = 0;
+  var poll = setInterval(function () {
+    var combo = document.querySelector(".goog-te-combo");
+    if (combo || tries > 25) {
+      clearInterval(poll);
+
+      var saved = localStorage.getItem("selectedLang") || "";
+      if (saved && combo) {
+        setTimeout(function () {
+          combo.value = saved;
+          combo.dispatchEvent(new Event("change"));
+        }, 300);
+      }
+    }
+    tries++;
+  }, 200);
+}
+
+(function () {
+  var s = document.createElement("script");
+  s.src =
+    "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
+  s.async = true;
+  document.head.appendChild(s);
+  window.googleTranslateElementInit = initGoogleTranslate;
+
+  var existing = localStorage.getItem("selectedLang");
+  if (existing) applySavedLanguage(existing);
+})();
+</script>
+
 </body>
 </html>
