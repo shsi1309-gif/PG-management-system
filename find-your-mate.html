@@ -3,1412 +3,1045 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unified Hostel Allocation and Mate Finder</title>
+    <title>Manager corner</title>
 
-<script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            DEFAULT: '#4f46e5', // Indigo 600
+                            light: '#818cf8',
+                            dark: '#3730a3',
+                        },
+                        secondary: {
+                            DEFAULT: '#ec4899', // Pink 500
+                            hover: '#db2777',
+                        },
+                        accent: '#10b981', // Emerald 500
+                        surface: '#ffffff',
+                        background: '#f3f4f6',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.4s ease-out',
+                        'slide-up': 'slideUp 0.5s ease-out',
+                        'bounce-slight': 'bounceSlight 2s infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        bounceSlight: {
+                            '0%, 100%': { transform: 'translateY(-3%)' },
+                            '50%': { transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
     <style>
-        /* --- General Reset & Layout --- */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Inter', sans-serif;
-            background: #f7f9fc;
+            /* engaging gradient background */
+            background: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 50%, #fae8ff 100%);
             min-height: 100vh;
-            padding: 30px 20px;
-            color: #1f2937;
         }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
+        /* Glassmorphism Utilities */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
         }
 
-        header {
-            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); /* Vibrant Indigo Header */
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            margin-bottom: 30px;
-            text-align: center;
-        }
-
-        h1 {
-            color: #ffffff;
-            font-size: 3.5em;
-            margin-bottom: 5px;
-            font-weight: 800;
-            letter-spacing: -1px;
-        }
-
-        .subtitle {
-            color: #eef2ff;
-            font-size: 1.3em;
-            font-weight: 300;
-        }
-
-        /* --- Main Content Structure --- */
-        .main-content {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 30px;
-        }
-
-        .card {
-            background: #ffffff;
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-            border: 1px solid #e5e7eb;
-            margin-bottom: 25px;
-        }
-
-        .card h2 {
-            color: #374151;
-            margin-bottom: 25px;
-            font-size: 2em;
-            border-bottom: 3px solid #f3f4f6;
-            padding-bottom: 15px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-        }
-
-        /* --- Icon Coloring based on Active Mode --- */
-        .card h2 .fas, .card h2 .far {
-            margin-right: 12px;
-            font-size: 1.2em;
-        }
-
-        /* Default (Allocation) Icon Color */
-        #content-allocation-left h2 .fas, #content-allocation-right h2 .fas {
-            color: #6366f1; /* Indigo */
-        }
-        /* Matching Icon Color */
-        #content-matching-left h2 .fas, #content-matching-right h2 .fas {
-            color: #06b6d4; /* Cyan/Teal */
-        }
-
-
-        /* --- Form Elements --- */
-        .form-group {
-            margin-bottom: 24px;
-        }
-
-        label {
-            display: flex;
-            align-items: center;
-            margin-bottom: 8px;
-            color: #4b5563;
-            font-weight: 600;
-            font-size: 0.95em;
-        }
-        label i {
-            margin-right: 8px;
-            color: #06b6d4; /* Use matching color for form icons */
-        }
-
-        input, select {
+        .custom-modal {
+            display: none; 
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
             width: 100%;
-            padding: 14px;
-            border: 2px solid #d1d5db;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(31, 41, 55, 0.6); /* Darker, blurred overlay */
+            backdrop-filter: blur(4px);
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            width: 90%;
+            max-width: 450px;
+            animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 1px solid #e5e7eb;
+        }
+
+        /* Form Inputs Styling */
+        input, select {
+            border: 2px solid #e2e8f0;
+            padding: 12px;
             border-radius: 10px;
-            font-size: 1em;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            background-color: #ffffff;
+            margin-bottom: 15px;
+            width: 100%;
+            transition: all 0.3s ease;
+            background-color: #f8fafc;
+            font-size: 0.95rem;
         }
 
         input:focus, select:focus {
+            border-color: #818cf8; /* Primary Light */
             outline: none;
-            border-color: #6366f1; /* Primary color on focus (Allocation mode default) */
-            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
-        }
-        /* Matching Form Focus Style */
-        #content-matching-left input:focus, #content-matching-left select:focus {
-            border-color: #06b6d4; /* Cyan color on focus for matching form */
-            box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.2);
+            box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.2);
+            background-color: #fff;
         }
 
-        .btn {
-            padding: 14px 30px;
-            border: none;
-            border-radius: 10px;
-            font-size: 1.05em;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            line-height: 1; /* Fix vertical alignment */
+        /* Custom Alert Styles */
+        #custom-alert-modal .modal-content {
+            max-width: 400px;
+            text-align: center;
+            border-top: 6px solid;
         }
-
-        /* Primary Button (Allocation default) */
-        .btn-primary {
-            background: linear-gradient(45deg, #6366f1 0%, #4f46e5 100%);
-            color: white;
-            width: 100%;
-            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
-        }
-
-        .btn-primary:hover {
-            opacity: 0.9;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.6);
-        }
-
-        /* Matching Button Style (Overrides primary for Mate Finder button) */
-        #find-mate-button {
-            background: linear-gradient(45deg, #06b6d4 0%, #0891b2 100%); /* Teal/Cyan gradient */
-            box-shadow: 0 5px 15px rgba(6, 182, 212, 0.4);
-        }
-        #find-mate-button:hover {
-             box-shadow: 0 8px 25px rgba(6, 182, 212, 0.6);
-        }
-
-        .controls {
-            display: flex;
-            gap: 20px;
-            margin-top: 30px;
-            flex-wrap: wrap;
-        }
-
-        .btn-secondary {
-            background: #06b6d4;
-            color: white;
-            flex-grow: 1;
-            box-shadow: 0 3px 10px rgba(6, 182, 212, 0.3);
-        }
-
-        .btn-secondary:hover {
-            background: #0891b2;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(6, 182, 212, 0.5);
-        }
-
-        .btn-danger {
-            background: #ef4444;
-            color: white;
-            flex-grow: 1;
-            box-shadow: 0 3px 10px rgba(239, 68, 68, 0.3);
-        }
-
-        .btn-danger:hover {
-            background: #dc2626;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(239, 68, 68, 0.5);
-        }
-
-        /* --- Tab Styles --- */
-        .tab-container {
-            display: flex;
-            margin-bottom: -2px;
-            border-bottom: 3px solid #e5e7eb;
-        }
-
-        .tab-button {
-            padding: 18px 30px;
-            border: none;
-            border-radius: 12px 12px 0 0;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: #f3f4f6;
-            color: #6b7280;
-            font-size: 1.1em;
-            margin-right: 8px;
-        }
-
-        /* Allocation Active Tab Style */
-        #tab-allocation-btn.active {
-            background: #ffffff;
-            color: #6366f1;
-            border: 1px solid #e5e7eb;
-            border-bottom: 3px solid #6366f1;
-            z-index: 1;
-            transform: translateY(1px);
-        }
-         /* Matching Active Tab Style */
-        #tab-matching-btn.active {
-            background: #ffffff;
-            color: #06b6d4; /* Teal for matching active tab */
-            border: 1px solid #e5e7eb;
-            border-bottom: 3px solid #06b6d4;
-            z-index: 1;
-            transform: translateY(1px);
-        }
-
-        .tab-button:hover:not(.active) {
-            color: #374151;
-            background-color: #e5e7eb;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
+        .alert-title-success { color: #10b981; border-color: #10b981; }
+        .alert-title-error { color: #ef4444; border-color: #ef4444; }
+        .alert-title-warning { color: #f59e0b; border-color: #f59e0b; }
+        
+        .allocation-form label {
+            color: #4b5563;
+            font-weight: 600;
+            margin-bottom: 6px;
             display: block;
         }
 
-
-        /* --- Student List --- (Allocation Specific) */
-        .student-list {
-            max-height: 480px;
+        /* Room Details Modal */
+        #room-details-modal .modal-content {
+            max-width: 900px;
+            width: 95%;
+            max-height: 85vh;
             overflow-y: auto;
-            padding-right: 15px;
+            background: linear-gradient(to bottom right, #ffffff, #f9fafb);
         }
 
-        .student-item {
-            background: #ffffff;
-            padding: 18px;
-            margin-bottom: 12px;
-            border-radius: 12px;
-            border-left: 6px solid #a5b4fc;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
         }
-
-        .student-item:hover {
-            transform: translateX(5px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
         }
-
-        .student-name {
-            font-weight: 700;
-            color: #1f2937;
-            font-size: 1.2em;
-            margin-bottom: 5px;
+        ::-webkit-scrollbar-thumb {
+            background: #c7c7c7; 
+            border-radius: 4px;
         }
-
-        .student-details {
-            color: #6b7280;
-            font-size: 0.9em;
-        }
-
-        .priority-badge {
-            display: inline-block;
-            background: #fcd34d;
-            color: #92400e;
-            padding: 5px 12px;
-            border-radius: 9999px;
-            font-size: 0.75em;
-            font-weight: 800;
-            margin-left: 10px;
-            letter-spacing: 0.5px;
-            border: 1px solid #fbbf24;
-        }
-
-        /* --- Match Results Styling (Matching Specific) --- */
-        .match-card {
-            background: #ffffff;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            border: 1px solid #e5e7eb;
-            transition: all 0.3s ease;
-        }
-
-        .match-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-        }
-
-        .match-card-top {
-            /* Highlight for the best match */
-            border: 3px solid #06b6d4; /* Teal Border */
-            background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 100%);
-            box-shadow: 0 8px 25px rgba(6, 182, 212, 0.2);
-            padding: 35px;
-        }
-
-        .match-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #e0f2f7; /* Lighter teal border */
-        }
-
-        .match-name {
-            font-size: 1.8em;
-            font-weight: 800;
-            color: #0891b2; /* Darker Teal */
-        }
-
-        .score-badge {
-            padding: 8px 16px;
-            border-radius: 50px;
-            font-size: 0.95em;
-            font-weight: 700;
-            color: white;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-
-        .score-high { background: linear-gradient(45deg, #10b981, #059669); } /* Green */
-        .score-moderate { background: linear-gradient(45deg, #fcd34d, #d97706); color: #78350f; } /* Yellow/Orange */
-        .score-low { background: linear-gradient(45deg, #f87171, #ef4444); } /* Red */
-
-
-        /* --- Rooms Grid (Allocation Specific) --- */
-        .rooms-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 25px;
-        }
-
-        .room-card {
-            /* Shared style, used for both allocation room and general match card */
-            background: #ffffff;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            border: 1px solid #e5e7eb;
-            transition: all 0.3s ease;
-        }
-
-        .room-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-        }
-
-        .room-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #f3f4f6;
-        }
-
-        .room-number {
-            font-size: 1.8em;
-            font-weight: 800;
-            color: #374151;
-        }
-
-        .room-capacity {
-            background: #10b981;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 50px;
-            font-size: 0.95em;
-            font-weight: 700;
-        }
-
-        .room-full {
-            border: 2px solid #ef4444;
-            box-shadow: 0 4px 20px rgba(239, 68, 68, 0.15);
-        }
-
-        .room-full .room-capacity {
-             background: #ef4444;
-        }
-
-        .roommate {
-            background: #f8fafc;
-            padding: 12px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-left: 4px solid #6366f1;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
-
-        .empty-room {
-            text-align: center;
-            color: #9ca3af;
-            padding: 25px;
-            font-style: italic;
-            background-color: #f9fafb;
-            border-radius: 10px;
-            margin-top: 15px;
-            border: 1px dashed #e5e7eb;
-        }
-
-        /* --- Stats --- */
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 25px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            text-align: center;
-            transition: transform 0.3s ease;
-            color: white;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0.1;
-            background: inherit;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
-        }
-
-        .stat-card-1 { background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); }
-        .stat-card-2 { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
-        .stat-card-3 { background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); }
-        .stat-card-4 { background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); }
-
-
-        .stat-number {
-            font-size: 3.5em;
-            font-weight: 900;
-            line-height: 1;
-            color: white;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
-        }
-
-        .stat-label {
-            font-size: 1em;
-            margin-top: 10px;
-            font-weight: 600;
-            opacity: 0.9;
-        }
-
-        /* --- Utility Tags --- */
-        .tag {
-            display: inline-block;
-            padding: 5px 10px;
-            border-radius: 6px;
-            font-size: 0.8em;
-            margin-right: 8px;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-
-        .tag-male {
-            background: #bfdbfe;
-            color: #1e40af;
-        }
-
-        .tag-female {
-            background: #fbcfe8;
-            color: #9d174d;
-        }
-
-        .tag-interest {
-            display: inline-block;
-            background: #d1fae5;
-            color: #065f46;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 0.75em;
-            font-weight: 600;
-            margin-right: 8px;
-            margin-bottom: 8px;
-            border: 1px solid #6ee7b7;
-        }
-
-
-        /* --- Media Queries --- */
-        @media (max-width: 1024px) {
-            .main-content {
-                grid-template-columns: 1fr;
-            }
-            .stats {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 600px) {
-            .stats {
-                grid-template-columns: 1fr;
-            }
-            .controls {
-                flex-direction: column;
-            }
-            .btn {
-                width: 100%;
-            }
-            header {
-                padding: 30px 20px;
-            }
-            h1 {
-                font-size: 2.5em;
-            }
-            .subtitle {
-                font-size: 1em;
-            }
-            body {
-                padding: 15px;
-            }
-            .card {
-                padding: 20px;
-            }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a0a0a0; 
         }
     </style>
+    <style>
+/* Hide Google top banner */
+.goog-te-banner-frame {
+    display: none !important;
+}
+
+/* Remove spacing that Google adds to body */
+body {
+    top: 0px !important;
+}
+
+/* Hide the Google toolbar that appears at top */
+#goog-gt-tt, .goog-te-balloon-frame, .goog-te-menu-frame {
+    display: none !important;
+}
+
+/* Prevent full-page grey overlay */
+.goog-te-overlay {
+    display: none !important;
+}
+
+/* Make sure no translation tooltip appears */
+.goog-text-highlight {
+    background: none !important;
+    box-shadow: none !important;
+}
+</style>
+
 </head>
-<body>
-    <div class="container">
-        <header>
-            <h1>🏢 Unified PG Management Hub</h1>
-            <p class="subtitle">Efficient Allocation and Smart Roommate Matching in one place.</p>
-        </header>
-
-        <div class="stats" id="stats">
-            <div class="stat-card stat-card-1">
-                <div class="stat-number" id="totalStudents">0</div>
-                <div class="stat-label">Total Students</div>
+<body class="font-sans text-gray-700">
+    
+    <div id="custom-alert-modal" class="custom-modal">
+        <div class="modal-content relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-2 bg-gray-200" id="alertBar"></div>
+            <div class="mt-4">
+                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-indigo-100 mb-4">
+                    <i class="fas fa-bell text-primary text-xl"></i>
+                </div>
+                <h3 id="alertTitle" class="text-xl font-bold mb-2 text-gray-800">Alert</h3>
+                <p id="alertMessage" class="text-gray-600 mb-6 px-4"></p>
             </div>
-            <div class="stat-card stat-card-2">
-                <div class="stat-number" id="allocatedStudents">0</div>
-                <div class="stat-label">Allocated</div>
-            </div>
-            <div class="stat-card stat-card-3">
-                <div class="stat-number" id="totalRooms">0</div>
-                <div class="stat-label">Total Rooms</div>
-            </div>
-            <div class="stat-card stat-card-4">
-                <div class="stat-number" id="availableRooms">0</div>
-                <div class="stat-label">Available Slots</div>
-            </div>
-        </div>
-
-
-<div class="tab-container">
-            <button id="tab-allocation-btn" class="tab-button active" onclick="switchMode('allocation')">
-                <i class="fas fa-bed mr-2"></i> Allocation Mode
-            </button>
-            <button id="tab-matching-btn" class="tab-button" onclick="switchMode('matching')">
-                <i class="fas fa-heart mr-2"></i> Roommate Matching
+            <button id="modal-close-btn" class="w-full bg-gradient-to-r from-primary to-primary-dark text-white font-bold py-3 px-4 rounded-xl hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5">
+                Okay, Got it
             </button>
         </div>
+    </div>
 
-        <div class="main-content">
-
-
-<div id="left-panel">
-
-
-<div id="content-allocation-left" class="tab-content active">
-                    <div class="card">
-                        <h2><i class="fas fa-user-plus"></i> Student Registration</h2>
-                        <form id="studentForm">
-                            <div class="form-group">
-                                <label for="studentName"><i class="fas fa-user-tag"></i> Student Name</label>
-                                <input type="text" id="studentName" required placeholder="Full Name">
-                            </div>
-                            <div class="form-group">
-                                <label for="studentId"><i class="fas fa-barcode"></i> Student ID</label>
-                                <input type="text" id="studentId" required placeholder="e.g., STU001">
-                            </div>
-                            <div class="form-group">
-                                <label for="gender"><i class="fas fa-venus-mars"></i> Gender</label>
-                                <select id="gender" required>
-                                    <option value="">Select Gender</option>
-                                    <option value="male">Male</option>
-                                    <option value="female">Female</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="priority"><i class="fas fa-sort-numeric-up-alt"></i> Priority (1-10)</label>
-                                <input type="number" id="priority" min="1" max="10" value="5" required>
-                                <small style="color: #9ca3af; font-size: 0.85em; display: block; margin-top: 5px;">Higher priority students are considered first for allocation.</small>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Add Student to System</button>
-                        </form>
-                    </div>
-
-                    <div class="card">
-                        <h2><i class="fas fa-hourglass-half"></i> Unallocated Students</h2>
-                        <div class="student-list" id="studentList">
-                            <p class="empty-room">No students waiting for allocation.</p>
-                        </div>
-                    </div>
+    <div id="auth-modal" class="custom-modal">
+        <div class="modal-content">
+            <div class="text-center mb-6">
+                <div class="inline-block p-3 rounded-full bg-indigo-100 text-primary mb-3">
+                    <i class="fas fa-user-shield text-2xl"></i>
                 </div>
-
-
-<div id="content-matching-left" class="tab-content">
-                    <div class="card">
-                        <h2><i class="fas fa-grin-hearts"></i> Mate Finder Profile</h2>
-                        <form id="mate-form" class="space-y-6">
-                            <div class="form-group">
-                                <label for="mate_name" class="block text-sm font-medium text-gray-700"><i class="fas fa-signature"></i> Your Name (for profile)</label>
-                                <input type="text" id="mate_name" required placeholder="Name for matching">
-                            </div>
-
-                            <div class="form-group">
-                                <label for="sharing_type" class="block text-sm font-medium text-gray-700"><i class="fas fa-users"></i> Preferred Sharing Type</label>
-                                <select id="sharing_type" required>
-                                    <option value="" disabled selected>Select sharing preference</option>
-                                    <option value="Single">Single Room (Private)</option>
-                                    <option value="Double">Double Sharing (2 Mates)</option>
-                                    <option value="Triple">Triple Sharing (3 Mates)</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="study_time" class="block text-sm font-medium text-gray-700"><i class="fas fa-clock"></i> Ideal Study/Work Time</label>
-                                <select id="study_time" required>
-                                    <option value="" disabled selected>Select time preference</option>
-                                    <option value="Early Morning">Early Morning (6 AM - 10 AM)</option>
-                                    <option value="Day Time">Day Time (10 AM - 6 PM)</option>
-                                    <option value="Late Night">Late Night (10 PM - 2 AM)</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="noise_level" class="block text-sm font-medium text-gray-700"><i class="fas fa-volume-up"></i> Noise Level Tolerance</label>
-                                <select id="noise_level" required>
-                                    <option value="" disabled selected>Select tolerance</option>
-                                    <option value="Quiet">Quiet (Need pin-drop silence)</option>
-                                    <option value="Moderate">Moderate (Background noise is fine)</option>
-                                    <option value="Loud">Loud (Don't mind music/calls)</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="interests" class="block text-sm font-medium text-gray-700"><i class="fas fa-palette"></i> Interests (Comma Separated)</label>
-                                <input type="text" id="interests" placeholder="e.g., Gaming, Reading, Cooking, Fitness" required>
-                                <small style="color: #9ca3af; font-size: 0.85em; display: block; margin-top: 5px;">Max 4-5 interests for the best match.</small>
-                            </div>
-
-                            <button type="submit" class="btn btn-primary" id="find-mate-button">
-                                <i class="fas fa-search mr-2"></i> Find My Match Now
-                            </button>
-                        </form>
-                        <div id="loading-indicator" class="hidden text-center mt-4">
-                            <i class="fas fa-spinner fa-spin text-cyan-500 text-2xl"></i>
-                            <p class="text-sm text-gray-500 mt-2">Calculating compatibility...</p>
-                        </div>
-                    </div>
-                </div>
-
+                <h3 id="auth-title" class="text-2xl font-bold text-gray-800">Manager Login</h3>
+                <p class="text-sm text-gray-500 mt-1">Secure access for staff only</p>
             </div>
+            
+            <form id="loginForm" class="mb-4">
+                <label for="loginUsername" class="text-sm font-medium mb-1 block text-gray-600">Username</label>
+                <input type="text" id="loginUsername" required placeholder="Enter Username" class="focus:ring-primary">
+                
+                <label for="loginPassword" class="text-sm font-medium mb-1 block text-gray-600">Password</label>
+                <input type="password" id="loginPassword" required placeholder="••••••••" class="focus:ring-primary">
+                
+                <button type="submit" class="w-full bg-gradient-to-r from-primary to-primary-dark text-white font-bold py-3 rounded-xl hover:shadow-lg hover:opacity-90 transition-all mt-4">
+                    <i class="fas fa-sign-in-alt mr-2"></i> Login
+                </button>
+            </form>
+            
+            <form id="registerForm" class="mb-4 hidden">
+                <label for="registerUsername" class="text-sm font-medium mb-1 block text-gray-600">New Username</label>
+                <input type="text" id="registerUsername" required placeholder="Choose a Username">
+                
+                <label for="registerPassword" class="text-sm font-medium mb-1 block text-gray-600">New Password</label>
+                <input type="password" id="registerPassword" required placeholder="Create Password">
+                
+                <button type="submit" class="w-full bg-gradient-to-r from-secondary to-pink-600 text-white font-bold py-3 rounded-xl hover:shadow-lg hover:opacity-90 transition-all mt-4">
+                    <i class="fas fa-user-plus mr-2"></i> Create Account
+                </button>
+            </form>
 
-
-<div id="right-panel">
-
-                <div class="card">
-                    <h2><i class="fas fa-cogs"></i> Room Configuration & Controls</h2>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px;">
-                        <div class="form-group" style="margin-bottom: 0;">
-                            <label for="roomNumber"><i class="fas fa-hashtag"></i> Room No.</label>
-                            <input type="text" id="roomNumber" placeholder="e.g., 101">
-                        </div>
-                        <div class="form-group" style="margin-bottom: 0;">
-                            <label for="capacity"><i class="fas fa-user-friends"></i> Capacity</label>
-                            <input type="number" id="capacity" min="1" max="6" value="2">
-                        </div>
-                        <div class="form-group" style="margin-bottom: 0;">
-                            <label for="roomGender"><i class="fas fa-venus-mars"></i> Gender</label>
-                            <select id="roomGender">
-                                <option value="male">Male</option>
-                                <option value="female">Female</option>
-                            </select>
-                        </div>
-                    </div>
-                    <button class="btn btn-primary" onclick="addRoom()">Add Room</button>
-
-                    <div class="controls">
-                        <button class="btn btn-secondary" onclick="autoAllocate()">🚀 Auto-Allocate (Greedy)</button>
-                        <button class="btn btn-danger" onclick="clearAll()">🧹 Clear All Data</button>
-                    </div>
-                </div>
-
-
-<div id="content-allocation-right" class="tab-content active">
-                    <div class="card">
-                        <h2><i class="fas fa-door-open"></i> Room Allocations</h2>
-                        <div class="rooms-grid" id="roomsGrid">
-                            <p class="empty-room" style="grid-column: 1/-1;">No rooms created yet</p>
-                        </div>
-                    </div>
-                </div>
-
-
-<div id="content-matching-right" class="tab-content">
-                    <div class="card">
-                        <h2><i class="fas fa-handshake"></i> Top Roommate Matches</h2>
-                        <div id="match-results" class="space-y-6">
-                            <p class="empty-room">Submit your profile to see your perfect roommate recommendations appear here.</p>
-                        </div>
-                    </div>
-                </div>
-
+            <div class="text-center mt-6 pt-4 border-t border-gray-100">
+                <button id="toggleAuthBtn" class="text-primary hover:text-primary-dark font-medium text-sm transition-colors">Need an account? Register</button>
             </div>
         </div>
     </div>
 
+    <div id="room-details-modal" class="custom-modal">
+        <div class="modal-content">
+            <div class="flex justify-between items-center border-b border-gray-100 pb-4 mb-6 sticky top-0 bg-white z-10">
+                <div>
+                    <h3 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+                        <i class="fas fa-building text-primary"></i> Room Occupancy
+                    </h3>
+                    <p class="text-sm text-gray-500">Live view of allocations across all blocks</p>
+                </div>
+                <button id="room-details-close-btn" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-red-100 hover:text-red-500 transition-colors text-xl">&times;</button>
+            </div>
+            <div id="roomDetailsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6 pb-4">
+                <div class="col-span-full flex flex-col items-center justify-center py-10 text-gray-400">
+                    <i class="fas fa-circle-notch fa-spin text-4xl mb-3 text-primary"></i>
+                    <p>Loading room data...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mx-auto p-4 lg:p-8 max-w-7xl">
+        
+        <header class="flex flex-col md:flex-row justify-between items-center mb-12 animate-fade-in">
+            <div class="text-center md:text-left mb-4 md:mb-0">
+                <h1 class="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-600 to-secondary mb-2">
+                    UniStay & Mate Finder
+                </h1>
+                <p class="text-gray-500 font-medium">Smart Allocation System for Modern Campuses</p>
+            </div>
+            <button id="managerAuthBtn" class="bg-white text-primary border border-indigo-100 font-bold py-2.5 px-6 rounded-full shadow-sm hover:shadow-md hover:bg-indigo-50 transition-all flex items-center gap-2">
+                <i class="fas fa-user-lock"></i> <span>Manager Access</span>
+            </button>
+        </header>
+        
+        <div id="managerContent" class="hidden animate-slide-up">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                
+                <div class="col-span-1 lg:col-span-4 space-y-8">
+                    
+                    <div class="glass-panel p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 border-t-4 border-primary">
+                        <div class="flex items-center gap-3 mb-5 border-b border-gray-100 pb-3">
+                            <div class="bg-indigo-100 p-2 rounded-lg text-primary"><i class="fas fa-door-open"></i></div>
+                            <h2 class="text-xl font-bold text-gray-800">Add Room</h2>
+                        </div>
+                        
+                        <form id="roomForm" class="allocation-form">
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label for="roomNumber" class="text-xs uppercase tracking-wide">Room No</label>
+                                    <input type="text" id="roomNumber" required placeholder="A-101">
+                                </div>
+                                <div>
+                                    <label for="capacity" class="text-xs uppercase tracking-wide">Capacity</label>
+                                    <input type="number" id="capacity" min="1" required value="2">
+                                </div>
+                            </div>
+                            
+                            <label for="hostelBlock" class="text-xs uppercase tracking-wide">Block Name</label>
+                            <input type="text" id="hostelBlock" required placeholder="Alpha Block">
+
+                            <label for="roomGender" class="text-xs uppercase tracking-wide">Allowed Gender</label>
+                            <select id="roomGender" required class="cursor-pointer">
+                                <option value="">Select Type</option>
+                                <option value="male">Male Only</option>
+                                <option value="female">Female Only</option>
+                                <option value="mixed">Co-ed / Mixed</option>
+                            </select>
+                            
+                            <button type="submit" class="w-full bg-gradient-to-r from-primary to-primary-dark text-white font-bold py-3 rounded-xl hover:shadow-lg hover:-translate-y-1 transition-all mt-2">
+                                <i class="fas fa-plus-circle"></i> Create Room
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="glass-panel p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 border-t-4 border-secondary">
+                        <div class="flex items-center gap-3 mb-5 border-b border-gray-100 pb-3">
+                            <div class="bg-pink-100 p-2 rounded-lg text-secondary"><i class="fas fa-cogs"></i></div>
+                            <h2 class="text-xl font-bold text-gray-800">System Actions</h2>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <p class="text-sm text-gray-500 mb-2">Process all unallocated students:</p>
+                                <button id="runAllocationBtn" class="w-full bg-gradient-to-r from-secondary to-pink-600 text-white font-bold py-3 rounded-xl hover:shadow-lg hover:-translate-y-1 transition-all flex items-center justify-center gap-2">
+                                    <i class="fas fa-magic"></i> <span>Auto-Allocate</span>
+                                </button>
+                                <p id="allocationStatus" class="mt-2 text-center text-sm font-medium h-5"></p>
+                            </div>
+                            
+                            <div class="border-t border-dashed border-gray-300 pt-4">
+                                <p class="text-sm text-gray-500 mb-2">Check current status:</p>
+                                <button id="viewRoomDetailsBtn" class="w-full bg-white text-gray-700 border-2 border-gray-200 font-bold py-3 rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all flex items-center justify-center gap-2">
+                                    <i class="fas fa-list-alt"></i> <span>View Database</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-span-1 lg:col-span-8 space-y-8">
+                    
+                    <div class="glass-panel p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 bg-white">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="bg-green-100 p-3 rounded-xl text-green-600 text-xl"><i class="fas fa-user-graduate"></i></div>
+                            <h2 class="text-2xl font-bold text-gray-800">Student Registration</h2>
+                        </div>
+                        
+                        <form id="studentForm" class="allocation-form">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div>
+                                    <label for="studentId" class="text-xs uppercase tracking-wide text-gray-500">Student ID</label>
+                                    <input type="text" id="studentId" required placeholder="1CR24C0001" class="bg-gray-50">
+                                </div>
+                                <div>
+                                    <label for="studentName" class="text-xs uppercase tracking-wide text-gray-500">Full Name</label>
+                                    <input type="text" id="studentName" required placeholder="John Doe">
+                                </div>
+                                <div>
+                                    <label for="studentGender" class="text-xs uppercase tracking-wide text-gray-500">Gender</label>
+                                    <select id="studentGender" required>
+                                        <option value="">Select Gender</option>
+                                        <option value="male">Male</option>
+                                        <option value="female">Female</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="priority" class="text-xs uppercase tracking-wide text-gray-500">Priority (0 = Highest)</label>
+                                    <input type="number" id="priority" min="0" value="0">
+                                </div>
+                                <div>
+                                    <label for="studyTime" class="text-xs uppercase tracking-wide text-gray-500">Preferred Study Time</label>
+                                    <select id="studyTime" required>
+                                        <option value="">Select Time</option>
+                                        <option value="Early Morning">Early Morning (5 AM - 9 AM)</option>
+                                        <option value="Day">Day (9 AM - 5 PM)</option>
+                                        <option value="Evening">Evening (5 PM - 10 PM)</option>
+                                        <option value="Night">Night Owl (10 PM+)</option>
+                                        <option value="Flexible">Flexible</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="hobbies" class="text-xs uppercase tracking-wide text-gray-500">Hobbies (Max 5)</label>
+                                    <input type="text" id="hobbies" required placeholder="coding, gaming, music...">
+                                </div>
+                            </div>
+
+                            <button type="submit" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold py-3 rounded-xl hover:shadow-lg hover:-translate-y-1 transition-all mt-6 flex justify-center items-center gap-2">
+                                <i class="fas fa-check-circle"></i> Register Student
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="glass-panel p-8 rounded-2xl shadow-lg bg-gradient-to-br from-white to-indigo-50">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 border-b border-indigo-100 pb-4">
+                            <div class="flex items-center gap-3 mb-4 md:mb-0">
+                                <div class="bg-purple-100 p-3 rounded-xl text-purple-600 text-xl"><i class="fas fa-search-location"></i></div>
+                                <div>
+                                    <h2 class="text-2xl font-bold text-gray-800">Find Your Mate</h2>
+                                    <p class="text-sm text-gray-500">Algorithm-based matching</p>
+                                </div>
+                            </div>
+                            
+                            <form id="mateFinderForm" class="flex w-full md:w-auto gap-2">
+                                <input type="text" id="mateStudentId" required placeholder="Student ID" class="mb-0 w-full md:w-48 bg-white">
+                                <button type="submit" class="bg-primary text-white px-6 py-2 rounded-xl hover:bg-primary-dark transition-colors shadow-md">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </form>
+                        </div>
+
+                        <div id="mateResultsSection">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-4">Potential Matches (<span id="matchCount" class="text-primary">0</span>)</h3>
+                            <div id="mateResultsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4 min-h-[100px]">
+                                <div class="col-span-full flex flex-col items-center justify-center text-gray-400 py-8 border-2 border-dashed border-gray-200 rounded-xl">
+                                    <i class="fas fa-user-friends text-4xl mb-2 opacity-30"></i>
+                                    <p>Enter an ID above to find compatible roommates.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="guestContent" class="flex flex-col items-center justify-center py-20 text-center animate-fade-in">
+            <div class="glass-panel p-10 rounded-3xl shadow-2xl max-w-2xl w-full bg-white/60">
+                <div class="w-24 h-24 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg animate-bounce-slight">
+                    <i class="fas fa-lock text-4xl text-white"></i>
+                </div>
+                <h2 class="text-3xl font-extrabold text-gray-800 mb-4">Access Restricted</h2>
+                <p class="text-lg text-gray-600 mb-8 leading-relaxed">
+                    Welcome to the Room Allocation System. Please log in as a <b>Manager</b> to access administrative features, register students, and run the allocation algorithms.
+                </p>
+                <button onclick="document.getElementById('auth-modal').style.display = 'flex'" class="bg-gradient-to-r from-primary to-purple-600 text-white text-lg font-bold py-4 px-10 rounded-full shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300">
+                    <i class="fas fa-key mr-2"></i> Open Manager Portal
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <footer class="text-center text-gray-400 text-sm py-8 mt-8">
+        <p>&copy; 2025 UniStay System. Built with <i class="fas fa-heart text-red-400 mx-1"></i> for Campus Life.</p>
+    </footer>
 
     <script>
-        // ============ DSA IMPLEMENTATION (Allocation System) ============
+        const BACKEND_URL = 'http://localhost:3000'; 
+        let studentMap = new Map();
+        let isManagerLoggedIn = false;
 
-        // 1. HASH MAP - O(1) lookup
-        class HashMap {
-            constructor() { this.map = {}; }
-            set(key, value) { this.map[key] = value; }
-            get(key) { return this.map[key]; }
-            delete(key) { delete this.map[key]; }
-            has(key) { return key in this.map; }
-            values() { return Object.values(this.map); }
-            keys() { return Object.keys(this.map); }
-            clear() { this.map = {}; }
+        // --- Custom Alert Modal Logic ---
+        const alertModal = document.getElementById('custom-alert-modal');
+        const alertTitle = document.getElementById('alertTitle');
+        const alertMessage = document.getElementById('alertMessage');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+        const alertBar = document.getElementById('alertBar');
+
+        function customAlert(message, title = 'Notification', type = 'Success') {
+            alertTitle.textContent = title;
+            alertMessage.textContent = message;
+            
+            // Reset classes
+            alertTitle.className = 'text-xl font-bold mb-2';
+            alertBar.className = 'absolute top-0 left-0 w-full h-2';
+
+            if (type.toLowerCase().includes('success') || type.toLowerCase().includes('login')) {
+                alertTitle.classList.add('text-green-600');
+                alertBar.classList.add('bg-green-500');
+            } else if (type.toLowerCase().includes('error') || type.toLowerCase().includes('denied') || type.toLowerCase().includes('failed')) {
+                alertTitle.classList.add('text-red-600');
+                alertBar.classList.add('bg-red-500');
+            } else {
+                alertTitle.classList.add('text-yellow-500');
+                alertBar.classList.add('bg-yellow-500');
+            }
+
+            alertModal.style.display = 'flex';
         }
 
-        // 2. MIN-HEAP PRIORITY QUEUE - For balanced room distribution
-        class MinHeap {
-            constructor() { this.heap = []; }
-            parent(i) { return Math.floor((i - 1) / 2); }
-            left(i) { return 2 * i + 1; }
-            right(i) { return 2 * i + 2; }
+        modalCloseBtn.addEventListener('click', () => {
+            alertModal.style.display = 'none';
+        });
 
-            insert(room) {
-                this.heap.push(room);
-                this.heapifyUp(this.heap.length - 1);
+        // --- Manager Authentication Logic ---
+        const authModal = document.getElementById('auth-modal');
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const toggleAuthBtn = document.getElementById('toggleAuthBtn');
+        const managerContent = document.getElementById('managerContent');
+        const guestContent = document.getElementById('guestContent');
+        const managerAuthBtn = document.getElementById('managerAuthBtn');
+
+        authModal.addEventListener('click', (e) => {
+            if (e.target === authModal) {
+                authModal.style.display = 'none';
             }
+        });
 
-            // Updates the heap structure after a room's occupancy changes (O(log n))
-            updateRoom(roomNumber) {
-                const index = this.heap.findIndex(r => r.number === roomNumber);
-                if (index !== -1) {
-                    // Try both up and down, as the room might be less full or more full
-                    this.heapifyDown(index);
-                    this.heapifyUp(index);
-                }
-            }
-
-            extractMin() {
-                if (this.heap.length === 0) return null;
-                if (this.heap.length === 1) return this.heap.pop();
-
-                const min = this.heap[0];
-                this.heap[0] = this.heap.pop();
-                this.heapifyDown(0);
-                return min;
-            }
-
-            heapifyUp(i) {
-                while (i > 0 && this.heap[i].occupants.length < this.heap[this.parent(i)].occupants.length) {
-                    [this.heap[i], this.heap[this.parent(i)]] = [this.heap[this.parent(i)], this.heap[i]];
-                    i = this.parent(i);
-                }
-            }
-
-            heapifyDown(i) {
-                let smallest = i;
-                const l = this.left(i);
-                const r = this.right(i);
-                const len = this.heap.length;
-
-                if (l < len && this.heap[l].occupants.length < this.heap[smallest].occupants.length) {
-                    smallest = l;
-                }
-                if (r < len && this.heap[r].occupants.length < this.heap[smallest].occupants.length) {
-                    smallest = r;
-                }
-
-                if (smallest !== i) {
-                    [this.heap[i], this.heap[smallest]] = [this.heap[smallest], this.heap[i]];
-                    this.heapifyDown(smallest);
-                }
-            }
-
-            clear() {
-                this.heap = [];
-            }
-        }
-
-
-        // Initialize data structures
-        const studentMap = new HashMap();
-        const roomMap = new HashMap();
-        const roomHeaps = {
-            male: new MinHeap(),
-            female: new MinHeap()
-        };
-
-        // ============ CORE ALLOCATION LOGIC ============
-
-        function addStudent() {
-            const student = {
-                id: document.getElementById('studentId').value.trim(),
-                name: document.getElementById('studentName').value.trim(),
-                gender: document.getElementById('gender').value,
-                priority: parseInt(document.getElementById('priority').value),
-                allocated: false,
-                roomNumber: null
-            };
-
-            if (studentMap.has(student.id)) {
-                // Use custom modal or message box instead of alert()
-                console.error('Error: Student ID already exists!');
-                return;
-            }
-            if (student.gender === "") {
-                console.error('Error: Please select a gender.');
-                return;
-            }
-
-            studentMap.set(student.id, student);
-
-            document.getElementById('studentForm').reset();
-            document.getElementById('priority').value = 5;
-            renderStudents();
-            updateStats();
-        }
-
-        function addRoom() {
-            const roomNumber = document.getElementById('roomNumber').value.trim();
-            const capacity = parseInt(document.getElementById('capacity').value);
-            const gender = document.getElementById('roomGender').value;
-
-            if (!roomNumber) {
-                console.error('Please enter a room number');
-                return;
-            }
-            if (roomMap.has(roomNumber)) {
-                console.error('Room number already exists!');
-                return;
-            }
-
-            const room = {
-                number: roomNumber,
-                capacity: capacity,
-                gender: gender,
-                occupants: []
-            };
-
-            roomMap.set(roomNumber, room);
-            roomHeaps[gender].insert(room);
-
-            document.getElementById('roomNumber').value = '';
-            renderRooms();
-            updateStats();
-        }
-
-        function allocateStudentToRoom(student, room) {
-            student.allocated = true;
-            student.roomNumber = room.number;
-            room.occupants.push(student);
-            roomHeaps[room.gender].updateRoom(room.number);
-        }
-
-        function autoAllocate() {
-            const students = studentMap.values();
-
-            // Sort students by priority (descending)
-            const unallocatedStudents = students
-                .filter(s => !s.allocated)
-                .sort((a, b) => b.priority - a.priority);
-
-            if (unallocatedStudents.length === 0) {
-                // Use custom modal or message box instead of alert()
-                console.log('No unallocated students remaining!');
-                return;
-            }
-
-            let allocatedCount = 0;
-
-            // Temporary storage for rooms extracted from the heap
-            const tempRooms = { male: [], female: [] };
-
-            for (const student of unallocatedStudents) {
-                const heap = roomHeaps[student.gender];
-                let foundRoom = null;
-
-                let room = heap.extractMin();
-
-                while (room) {
-                    if (room.occupants.length < room.capacity) {
-                        foundRoom = room;
-                        break;
-                    }
-                    tempRooms[student.gender].push(room);
-                    room = heap.extractMin();
-                }
-
-                if (foundRoom) {
-                    allocateStudentToRoom(student, foundRoom);
-                    allocatedCount++;
-                    heap.insert(foundRoom);
-                }
-
-                // Return all temporarily extracted rooms back to the heap
-                tempRooms[student.gender].forEach(r => heap.insert(r));
-                tempRooms[student.gender] = [];
-            }
-
-            console.log(`Auto-allocation complete! ${allocatedCount} students were allocated.`);
-            renderStudents();
-            renderRooms();
-            updateStats();
-        }
-
-        function deallocateStudent(studentId) {
-            const student = studentMap.get(studentId);
-            if (!student || !student.allocated) return;
-
-            const room = roomMap.get(student.roomNumber);
-            if (!room) return;
-
-            room.occupants = room.occupants.filter(s => s.id !== student.id);
-
-            student.allocated = false;
-            student.roomNumber = null;
-
-            roomHeaps[room.gender].updateRoom(room.number);
-
-            renderStudents();
-            renderRooms();
-            updateStats();
-        }
-
-        function deleteRoom(roomNumber) {
-            const room = roomMap.get(roomNumber);
-            if (!room) return;
-
-            if (room.occupants.length > 0) {
-                // Use custom modal or message box instead of alert()
-                console.error('Cannot delete a room with occupants. Please deallocate all students first.');
-                return;
-            }
-
-            roomMap.delete(roomNumber);
-
-            // Rebuild the heap for the affected gender
-            const gender = room.gender;
-            const newHeap = new MinHeap();
-            roomMap.values().filter(r => r.gender === gender).forEach(r => newHeap.insert(r));
-            roomHeaps[gender] = newHeap;
-
-            renderRooms();
-            updateStats();
-        }
-
-        function clearAll() {
-            // NOTE: Using window.confirm() as a placeholder since custom modal implementation would be verbose.
-            // In a real application, this would be replaced by a UI modal.
-            if (window.confirm("Are you sure you want to clear ALL student and room data? This action cannot be undone.")) {
-                studentMap.clear();
-                roomMap.clear();
-                roomHeaps.male.clear();
-                roomHeaps.female.clear();
-
-                // Clear Mate Finder mock data as well
-                window.mockRoommateProfiles = [];
-
-                renderStudents();
-                renderRooms();
-                updateStats();
-            }
-        }
-
-        // ============ RENDER/UI LOGIC (Allocation) ============
-
-        function updateStats() {
-            const allStudents = studentMap.values();
-            const totalStudents = allStudents.length;
-            const allocatedStudents = allStudents.filter(s => s.allocated).length;
-            const allRooms = roomMap.values();
-            const totalRooms = allRooms.length;
-            const availableSlots = allRooms.reduce((sum, room) => sum + (room.capacity - room.occupants.length), 0);
-
-            document.getElementById('totalStudents').textContent = totalStudents;
-            document.getElementById('allocatedStudents').textContent = allocatedStudents;
-            document.getElementById('totalRooms').textContent = totalRooms;
-            document.getElementById('availableRooms').textContent = availableSlots;
-        }
-
-        function renderStudents() {
-            const list = document.getElementById('studentList');
-            const students = studentMap.values();
-
-            const unallocated = students
-                .filter(s => !s.allocated)
-                .sort((a, b) => b.priority - a.priority);
-
-            if (unallocated.length === 0) {
-                list.innerHTML = '<p class="empty-room">No students waiting for allocation.</p>';
-                return;
-            }
-
-            list.innerHTML = unallocated.map(student => `
-                <div class="student-item">
-                    <div class="student-info">
-                        <div class="student-name">
-                            ${student.name}
-                            <span class="tag tag-${student.gender}">${student.gender}</span>
-                            <span class="priority-badge">P${student.priority}</span>
-                        </div>
-                        <div class="student-details">
-                            ID: ${student.id}
-                        </div>
-                    </div>
-                    <div>
-                        <button class="btn btn-secondary" style="padding: 8px 14px; font-size: 0.85em; flex-grow: 0; background-image: none; background-color: #06b6d4;" onclick="manualAllocatePrompt('${student.id}')">Allocate</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function renderRooms() {
-            const grid = document.getElementById('roomsGrid');
-            const rooms = roomMap.values();
-
-            if (rooms.length === 0) {
-                grid.innerHTML = '<p class="empty-room" style="grid-column: 1/-1;">No rooms created yet</p>';
-                return;
-            }
-
-            rooms.sort((a, b) => a.number.localeCompare(b.number));
-
-            grid.innerHTML = rooms.map(room => `
-                <div class="room-card ${room.occupants.length >= room.capacity ? 'room-full' : ''}">
-                    <div class="room-header">
-                        <div class="room-number">Room ${room.number}</div>
-                        <div class="room-capacity">${room.occupants.length}/${room.capacity}</div>
-                    </div>
-                    <div style="margin-bottom: 10px;">
-                        <span class="tag tag-${room.gender}">${room.gender} Only</span>
-                    </div>
-                    ${room.occupants.length === 0 ?
-                        '<div class="empty-room">Vacant</div>' :
-                        room.occupants.map(occupant => `
-                            <div class="roommate">
-                                <div>
-                                    <div style="font-weight: 600; color: #374151;">${occupant.name}</div>
-                                    <div style="font-size: 0.85em; color: #6b7280;">ID: ${occupant.id} | P: ${occupant.priority}</div>
-                                </div>
-                                <button class="btn btn-danger" style="padding: 4px 8px; font-size: 0.75em; flex-grow: 0;" onclick="deallocateStudent('${occupant.id}')">X</button>
-                            </div>
-                        `).join('')
-                    }
-                    <button class="btn btn-danger" style="width: 100%; margin-top: 15px; padding: 10px; font-size: 0.9em;" onclick="deleteRoom('${room.number}')">Delete Room</button>
-                </div>
-            `).join('');
-        }
-
-        function manualAllocatePrompt(studentId) {
-            const student = studentMap.get(studentId);
-            const rooms = roomMap.values().filter(r =>
-                r.gender === student.gender && r.occupants.length < r.capacity
-            ).map(r => r.number);
-
-            if (rooms.length === 0) {
-                // Use custom modal or message box instead of alert()
-                console.log(`No available ${student.gender} rooms.`);
-                return;
-            }
-
-            // Using window.prompt as a placeholder for manual interaction
-            const roomNumber = prompt(`Allocate ${student.name} to which room? Available: ${rooms.join(', ')}`);
-
-            if (roomNumber && roomMap.has(roomNumber)) {
-                const room = roomMap.get(roomNumber);
-                if (room.gender !== student.gender) {
-                    console.error('Error: Gender mismatch.');
-                } else if (room.occupants.length >= room.capacity) {
-                    console.error('Error: Room is full.');
-                } else {
-                    allocateStudentToRoom(student, room);
-                    renderStudents();
-                    renderRooms();
-                    updateStats();
-                }
-            } else if (roomNumber) {
-                console.error('Invalid room number or action cancelled.');
-            }
-        }
-
-        // ============ MATE FINDER LOGIC (Mock DB) ============
-
-        window.currentUserId = 'admin-user'; // Keep a constant ID for consistency
-
-        window.mockRoommateProfiles = [
-            // Sample Data for Matching
-            { id: 'mock-1a2b3c', name: 'Ankita Sharma', sharing_type: 'Double', study_time: 'Late Night', noise_level: 'Quiet', interests: ['Reading', 'Coding', 'Hiking'], isMateFinder: true },
-            { id: 'mock-4d5e6f', name: 'Rahul Verma', sharing_type: 'Double', study_time: 'Early Morning', noise_level: 'Moderate', interests: ['Fitness', 'Gaming', 'Cooking'], isMateFinder: true },
-            { id: 'mock-j0k1l2', name: 'Amit Kumar', sharing_type: 'Double', study_time: 'Late Night', noise_level: 'Quiet', interests: ['Coding', 'Gaming', 'Movies'], isMateFinder: true },
-            { id: 'mock-a1b2c3', name: 'Arjun Mehra', sharing_type: 'Single', study_time: 'Early Morning', noise_level: 'Quiet', interests: ['Finance', 'Chess', 'Meditation'], isMateFinder: true },
-            { id: 'mock-d4e5f6', name: 'Siya Reddy', sharing_type: 'Triple', study_time: 'Day Time', noise_level: 'Moderate', interests: ['Art', 'Cooking', 'Gardening'], isMateFinder: true },
-            { id: 'mock-g7h8i9', name: 'Vikram Patel', sharing_type: 'Triple', study_time: 'Late Night', noise_level: 'Loud', interests: ['Music', 'Drums', 'Fitness'], isMateFinder: true },
-        ];
-
-        function getRoomCapacity(sharingType) {
-            switch (sharingType) {
-                case 'Single': return 1;
-                case 'Double': return 2;
-                case 'Triple': return 3;
-                default: return 1;
-            }
-        }
-
-        function calculateMatchScore(currentUserProfile, potentialMatch) {
-            let score = 0;
-            if (currentUserProfile.study_time === potentialMatch.study_time) score += 15;
-            if (currentUserProfile.noise_level === potentialMatch.noise_level) score += 15;
-            if (currentUserProfile.sharing_type === potentialMatch.sharing_type) score += 30; // Strict filter, but add score
-
-            const userInterests = currentUserProfile.interests || [];
-            const matchInterests = potentialMatch.interests || [];
-
-            let sharedInterests = 0;
-            userInterests.forEach(userInt => {
-                if (matchInterests.map(i => i.toLowerCase()).includes(userInt.toLowerCase())) {
-                    sharedInterests++;
-                }
-            });
-            score += Math.min(sharedInterests, 4) * 10;
-
-            return Math.min(score, 100);
-        }
-
-        function renderMatches(matches, sharingType) {
-            const resultsDiv = document.getElementById('match-results');
-            resultsDiv.innerHTML = '';
-            const capacity = getRoomCapacity(sharingType);
-            const slotsAvailable = capacity - 1;
-
-            if (matches.length === 0) {
-                resultsDiv.innerHTML = '<p class="empty-room">No suitable matches found for your current preferences. Try broadening your criteria!</p>';
-                return;
-            }
-
-            const createMatchCard = (match, isTopMatch = false) => {
-                let scoreClass = 'score-low';
-                if (match.score >= 80) scoreClass = 'score-high';
-                else if (match.score >= 50) scoreClass = 'score-moderate';
-
-                const interestsHTML = match.interests.map(i =>
-                    `<span class="tag-interest">${i}</span>`
-                ).join(' ');
-
-                let actionButtons = '';
-                let roomStatusMessage = '';
-
-                if (isTopMatch) {
-                    const mateButtonColor = slotsAvailable > 0 ? '#10b981' : '#f59e0b';
-                    const newRoomButtonColor = '#06b6d4';
-
-                    if (slotsAvailable > 0) {
-                        actionButtons += `
-                            <button onclick="simulateAddMate('${match.name}', '${sharingType}')" class="btn" style="flex: 1; margin-right: 15px; padding: 12px; background-color: ${mateButtonColor}; color: white; font-size: 0.9em;">
-                                <i class="fas fa-user-plus mr-1"></i> Add Mate
-                            </button>
-                        `;
-                    } else {
-                        roomStatusMessage = `
-                            <div class="mt-4 p-3 bg-red-100 border border-red-300 text-red-700 text-sm font-medium rounded-lg">
-                                <i class="fas fa-info-circle mr-2"></i> Your ${sharingType} room is full (Capacity ${capacity}).
-                            </div>
-                        `;
-                    }
-
-                    actionButtons += `
-                        <button onclick="simulateNewRoom('${match.name}', '${sharingType}')" class="btn" style="flex: 1; margin-right: 0; padding: 12px; background-color: ${newRoomButtonColor}; color: white; font-size: 0.9em;">
-                            <i class="fas fa-key mr-1"></i> New Room
-                        </button>
-                    `;
-                }
-
-
-                return `
-                    <div class="match-card ${isTopMatch ? 'match-card-top' : ''}">
-                        <div class="match-header">
-                            <div class="match-name">${match.name} ${isTopMatch ? ' <span class="text-base font-semibold text-cyan-500">(Top Match)</span>' : ''}</div>
-                            <div class="score-badge ${scoreClass}">Score: ${match.score}%</div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-y-3 text-sm text-gray-700 mb-4">
-                            <p><i class="fas fa-clock text-cyan-500 mr-2"></i> Study Time: <strong>${match.study_time}</strong></p>
-                            <p><i class="fas fa-volume-up text-cyan-500 mr-2"></i> Noise Level: <strong>${match.noise_level}</strong></p>
-                            <p><i class="fas fa-house-user text-cyan-500 mr-2"></i> Sharing: <strong>${match.sharing_type}</strong></p>
-                        </div>
-                        <p class="text-xs font-medium text-gray-600 mb-2">Interests:</p>
-                        <div class="flex flex-wrap gap-2">${interestsHTML}</div>
-
-                        ${roomStatusMessage}
-
-                        <div class="mt-5 flex ${actionButtons ? 'justify-between' : 'hidden'}">
-                            ${actionButtons}
-                        </div>
-                    </div>
-                `;
-            };
-
-            // Display TOP MATCH
-            if (matches[0]) {
-                resultsDiv.innerHTML += createMatchCard(matches[0], true);
-            }
-
-            // Display secondary matches
-            if (matches.length > 1) {
-                resultsDiv.innerHTML += `<h3 class="text-2xl font-bold text-gray-700 mt-8 mb-4 border-b pb-2"><i class="fas fa-list-ul text-cyan-500 mr-2"></i> Other Good Matches</h3>`;
-                resultsDiv.innerHTML += `<div class="space-y-4">${matches.slice(1, 4).map(match => createMatchCard(match, false)).join('')}</div>`;
-            }
-        }
-
-        window.simulateAddMate = (name, sharingType) => {
-            document.getElementById('match-results').innerHTML = `
-                <div class="bg-green-100 border-l-8 border-green-500 text-gray-800 p-8 rounded-xl shadow-lg">
-                    <h3 class="text-2xl font-bold mb-3 text-green-700"><i class="fas fa-check-circle mr-3"></i> Mate Added Successfully!</h3>
-                    <p class="text-lg">You have successfully invited {name} to fill a slot in your existing {sharingType} room.</p>
-                </div>
-            `;
-        }
-
-        window.simulateNewRoom = (name, sharingType) => {
-            document.getElementById('match-results').innerHTML = `
-                <div class="bg-indigo-100 border-l-8 border-indigo-500 text-gray-800 p-8 rounded-xl shadow-lg">
-                    <h3 class="text-2xl font-bold mb-3 text-indigo-700"><i class="fas fa-home mr-3"></i> New Room Arrangement!</h3>
-                    <p class="text-lg">You and ${name} are starting a brand new ${sharingType} room arrangement. </p>
-                </div>
-            `;
-        }
-
-        document.getElementById('mate-form').addEventListener('submit', async (e) => {
+        toggleAuthBtn.addEventListener('click', (e) => {
             e.preventDefault();
+            const isLoginView = !loginForm.classList.contains('hidden');
+            loginForm.classList.toggle('hidden');
+            registerForm.classList.toggle('hidden');
+            document.getElementById('auth-title').textContent = isLoginView ? 'Manager Registration' : 'Manager Login';
+            toggleAuthBtn.textContent = isLoginView ? 'Already have an account? Login' : 'Need an account? Register';
+        });
 
-            const loadingIndicator = document.getElementById('loading-indicator');
-            loadingIndicator.classList.remove('hidden');
+        function setManagerUI(isLoggedIn) {
+            isManagerLoggedIn = isLoggedIn;
+            managerContent.classList.toggle('hidden', !isLoggedIn);
+            guestContent.classList.toggle('hidden', isLoggedIn);
+            
+            if (isLoggedIn) {
+                managerAuthBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> <span>Logout</span>';
+                managerAuthBtn.classList.add('bg-red-50', 'text-red-600', 'border-red-100');
+                managerAuthBtn.classList.remove('bg-white', 'text-primary');
+            } else {
+                managerAuthBtn.innerHTML = '<i class="fas fa-user-lock"></i> <span>Manager Access</span>';
+                managerAuthBtn.classList.remove('bg-red-50', 'text-red-600', 'border-red-100');
+                managerAuthBtn.classList.add('bg-white', 'text-primary');
+            }
+            
+            authModal.style.display = 'none'; 
+        }
 
-            // Simulate API latency
-            await new Promise(resolve => setTimeout(resolve, 1200));
-
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('registerUsername').value;
+            const password = document.getElementById('registerPassword').value;
+            
             try {
-                const name = document.getElementById('mate_name').value.trim();
-                const sharing_type = document.getElementById('sharing_type').value;
-                const study_time = document.getElementById('study_time').value;
-                const noise_level = document.getElementById('noise_level').value;
-                const interestsString = document.getElementById('interests').value.trim();
-                const interests = interestsString.split(',').map(i => i.trim()).filter(i => i !== '');
+                const response = await fetch(`${BACKEND_URL}/api/manager/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
 
-                const currentUserProfile = {
-                    id: window.currentUserId,
-                    name: name,
-                    sharing_type: sharing_type,
-                    study_time: study_time,
-                    noise_level: noise_level,
-                    interests: interests,
-                    timestamp: new Date().getTime()
-                };
+                const result = await response.json();
 
-                // Get all matching profiles (filter by sharing_type)
-                const potentialMatches = window.mockRoommateProfiles.filter(profile =>
-                    profile.sharing_type === sharing_type && profile.id !== window.currentUserId
-                );
+                if (!response.ok) {
+                    throw new Error(result.message || 'Registration failed.');
+                }
+                
+                customAlert('Manager registered successfully. Please log in.', 'Success');
+                document.getElementById('toggleAuthBtn').click(); 
+            } catch (error) {
+                customAlert(`Registration failed: ${error.message}`, 'Error');
+            }
+        });
 
-                // Calculate scores and sort
-                const scoredMatches = potentialMatches
-                    .map(match => ({
-                        ...match,
-                        score: calculateMatchScore(currentUserProfile, match)
-                    }))
-                    .sort((a, b) => b.score - a.score);
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/manager/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
 
-                renderMatches(scoredMatches, sharing_type);
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.message || 'Login failed.');
+                }
+                
+                sessionStorage.setItem('managerToken', result.token);
+                customAlert('Welcome back, Manager!', 'Login Success');
+                setManagerUI(true);
 
             } catch (error) {
-                console.error("Error during matching process:", error);
-                document.getElementById('match-results').innerHTML = `<p class="empty-room" style="color: #ef4444; border: 1px solid #fca5a5;">An error occurred during matching.</p>`;
-            } finally {
-                loadingIndicator.classList.add('hidden');
+                customAlert(`Login failed: ${error.message}`, 'Error');
+                setManagerUI(false);
             }
         });
 
+        managerAuthBtn.addEventListener('click', () => {
+            if (isManagerLoggedIn) {
+                sessionStorage.removeItem('managerToken');
+                setManagerUI(false);
+                customAlert('You have been logged out.', 'Logout');
+                initializeData();
+            } else {
+                authModal.style.display = 'flex';
+            }
+        });
+        // --- END Authentication Logic ---
 
-        // ============ TAB SWITCHING LOGIC ============
 
-        function switchMode(mode) {
-            const tabs = ['allocation', 'matching'];
-
-            tabs.forEach(tab => {
-                const isActive = tab === mode;
-
-                // Toggle tab buttons
-                document.getElementById(`tab-${tab}-btn`).classList.toggle('active', isActive);
-
-                // Toggle left panel content
-                const leftContent = document.getElementById(`content-${tab}-left`);
-                if (leftContent) leftContent.classList.toggle('active', isActive);
-
-                // Toggle right panel content
-                const rightContent = document.getElementById(`content-${tab}-right`);
-                if (rightContent) rightContent.classList.toggle('active', isActive);
-            });
+        // --- Core Data Handling & Fetching ---
+        async function fetchStudents() {
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/students`);
+                if (!response.ok) throw new Error('Failed to fetch students.');
+                const students = await response.json();
+                studentMap = new Map(students.map(s => [s.id, s]));
+                console.log('Students data loaded.');
+                return students;
+            } catch (error) {
+                console.error('Error fetching students:', error);
+                return []; 
+            }
+        }
+        
+        async function initializeData() {
+             await fetchStudents();
         }
 
 
-        // ============ INITIALIZATION ============
-
-        function initializeDefaultData() {
-            // Default Allocation Rooms
-            const defaultRooms = [
-                { number: '101', capacity: 2, gender: 'male' },
-                { number: '102', capacity: 2, gender: 'male' },
-                { number: '201', capacity: 3, gender: 'female' },
-                { number: '202', capacity: 3, gender: 'female' },
-            ];
-
-            defaultRooms.forEach(r => {
-                const room = { number: r.number, capacity: r.capacity, gender: r.gender, occupants: [] };
-                if (!roomMap.has(r.number)) {
-                    roomMap.set(r.number, room);
-                    roomHeaps[r.gender].insert(room);
-                }
-            });
-
-            // Default Allocation Students
-            const defaultStudents = [
-                { id: '1CR24C0404', name: 'Thouheed', gender: 'male', priority: 10, allocated: false, roomNumber: null },
-                { id: '1CR23D0002', name: 'Abhishek', gender: 'male', priority: 8, allocated: false, roomNumber: null },
-                { id: '1CR23CD055', name: 'Priya', gender: 'female', priority: 5, allocated: false, roomNumber: null },
-                { id: '1CR23CD040', name: 'Jane', gender: 'female', priority: 2, allocated: false, roomNumber: null },
-            ];
-
-            defaultStudents.forEach(s => {
-                if (!studentMap.has(s.id)) {
-                    studentMap.set(s.id, s);
-                }
-            });
-
-            // Default Mate Finder Data (already defined globally)
-        }
-
-
-        // Event Listeners for Allocation Form
-        document.getElementById('studentForm').addEventListener('submit', function(e) {
+        // --- Room Management Logic ---
+        async function addRoom(e) {
             e.preventDefault();
-            addStudent();
+            if (!isManagerLoggedIn) return customAlert('You must be logged in as a Manager to add rooms.', 'Access Denied', 'Error');
+
+            const roomData = {
+                roomNumber: document.getElementById('roomNumber').value.trim(),
+                capacity: parseInt(document.getElementById('capacity').value),
+                gender: document.getElementById('roomGender').value,
+                hostelBlock: document.getElementById('hostelBlock').value.trim(),
+            };
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/rooms`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(roomData)
+                });
+                
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.message || 'Failed to add room.');
+                }
+
+                customAlert(`Room ${result.roomNumber} (Capacity: ${result.capacity}) added successfully!`, 'Room Added', 'Success');
+                document.getElementById('roomForm').reset();
+            } catch (error) {
+                customAlert(`Failed to add room: ${error.message}`, 'Error');
+            }
+        }
+        
+        async function runAllocation() {
+            if (!isManagerLoggedIn) return customAlert('You must be logged in as a Manager to run allocation.', 'Access Denied', 'Error');
+
+            const statusElement = document.getElementById('allocationStatus');
+            statusElement.innerHTML = '<span class="flex items-center justify-center gap-2 text-indigo-600"><i class="fas fa-circle-notch fa-spin"></i> Running allocation...</span>';
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/allocate`, { method: 'POST' });
+                const result = await response.json();
+
+                if (!response.ok) {
+                    if (response.status === 400 && result.message.includes('Insufficient rooms')) {
+                        customAlert(result.message, 'Allocation Failed', 'Error');
+                        statusElement.innerHTML = '<span class="text-red-500 font-bold"><i class="fas fa-times-circle"></i> Insufficient Rooms</span>';
+                        return; 
+                    }
+                    throw new Error(result.message || 'Allocation failed on server.');
+                }
+
+                statusElement.innerHTML = `<span class="text-green-600 font-bold"><i class="fas fa-check-circle"></i> Allocated ${result.allocated}/${result.totalProcessed}</span>`;
+                customAlert(statusElement.textContent, 'Allocation Success', 'Success');
+                await initializeData(); 
+
+            } catch (error) {
+                statusElement.innerHTML = '<span class="text-red-500 font-bold">Server Error</span>';
+                customAlert(`Allocation failed: ${error.message}`, 'Error');
+            }
+        }
+
+        // --- Student Registration ---
+        async function addStudent() {
+            if (!isManagerLoggedIn) return customAlert('You must be logged in as a Manager to register students.', 'Access Denied', 'Error');
+
+            const hobbiesInput = document.getElementById('hobbies').value.trim();
+            const hobbiesArray = hobbiesInput.split(',').map(h => h.trim()).filter(h => h.length > 0);
+            
+            if (hobbiesArray.length > 5) {
+                 return customAlert('Please enter a maximum of 5 hobbies.', 'Validation Error', 'Warning');
+            }
+            if (hobbiesArray.length < 1) {
+                 return customAlert('Please enter at least one hobby.', 'Validation Error', 'Warning');
+            }
+
+
+            const studentData = {
+                id: document.getElementById('studentId').value.trim(),
+                name: document.getElementById('studentName').value.trim(),
+                gender: document.getElementById('studentGender').value,
+                priority: parseInt(document.getElementById('priority').value),
+                studyTime: document.getElementById('studyTime').value,
+                hobbies: hobbiesArray 
+            };
+            
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/students`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(studentData)
+                });
+                
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.message || 'Failed to add student.');
+                }
+                
+                customAlert(`Student ${result.name} (${result.id}) registered successfully!`, 'Student Added', 'Success');
+                document.getElementById('studentForm').reset();
+                await initializeData();
+
+            } catch (error) {
+                customAlert(`Failed to register student: ${error.message}`, 'Error');
+            }
+        }
+
+        // --- Mate Finder Logic ---
+        async function findMates(e) {
+            e.preventDefault();
+            if (!isManagerLoggedIn) return customAlert('You must be logged in as a Manager to use the Mate Finder.', 'Access Denied', 'Error');
+            
+            const studentId = document.getElementById('mateStudentId').value.trim();
+            const container = document.getElementById('mateResultsContainer');
+            const countSpan = document.getElementById('matchCount');
+            
+            container.innerHTML = `<p class="text-primary col-span-full text-center py-4"><i class="fas fa-spinner fa-spin fa-2x"></i><br>Crunching the data...</p>`;
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/findmate/${studentId}`);
+                const candidates = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(candidates.message || 'Could not fetch candidates.');
+                }
+
+                container.innerHTML = ''; 
+                countSpan.textContent = candidates.length;
+
+                if (candidates.length === 0) {
+                    container.innerHTML = `
+                        <div class="col-span-full text-center py-6 bg-gray-50 rounded-xl border border-gray-200">
+                            <i class="fas fa-ghost text-3xl text-gray-300 mb-2"></i>
+                            <p class="text-gray-500 font-medium">No matches found for ${studentId}.</p>
+                        </div>`;
+                    customAlert(`No mates found for Student ID: ${studentId}.`, 'No Matches', 'Warning');
+                } else {
+                    candidates.forEach(mate => {
+                        const scoreColor = mate.score >= 80 ? 'text-green-500' : (mate.score >= 50 ? 'text-yellow-500' : 'text-gray-400');
+                        
+                        const card = document.createElement('div');
+                        card.className = 'bg-white p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow border border-gray-100 relative overflow-hidden';
+                        card.innerHTML = `
+                            <div class="absolute top-0 right-0 bg-gray-100 rounded-bl-xl px-3 py-1 text-xs font-bold text-gray-500">ID: ${mate.id}</div>
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text-lg font-bold shadow-md">
+                                    ${mate.name.charAt(0)}
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-bold text-gray-800 leading-tight">${mate.name}</h3>
+                                    <div class="flex items-center gap-2 mt-1">
+                                        <div class="text-sm font-bold ${scoreColor}">
+                                            <i class="fas fa-star"></i> ${mate.score.toFixed(0)}% Match
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4 space-y-2 text-sm">
+                                <div class="flex items-center gap-2 text-gray-600">
+                                    <i class="fas fa-clock w-5 text-center text-indigo-400"></i> 
+                                    <span>${mate.studyTime}</span>
+                                </div>
+                                <div class="flex items-start gap-2 text-gray-600">
+                                    <i class="fas fa-gamepad w-5 text-center mt-1 text-pink-400"></i> 
+                                    <span class="italic">${mate.hobbies.join(', ')}</span>
+                                </div>
+                            </div>
+                        `;
+                        container.appendChild(card);
+                    });
+                }
+
+            } catch (error) {
+                console.error('Mate Finder Error:', error);
+                countSpan.textContent = 'Error';
+                container.innerHTML = `<p class="text-red-500 font-bold col-span-full text-center bg-red-50 p-4 rounded-lg">Search failed: ${error.message}</p>`;
+                customAlert(`Mate search failed: ${error.message}`, 'Mate Finder Error', 'Error');
+            }
+        }
+        
+        // --- Room Details Logic (UPDATED) ---
+
+        const roomDetailsModal = document.getElementById('room-details-modal');
+        const roomDetailsContainer = document.getElementById('roomDetailsContainer');
+        const viewRoomDetailsBtn = document.getElementById('viewRoomDetailsBtn');
+        const roomDetailsCloseBtn = document.getElementById('room-details-close-btn');
+
+        roomDetailsCloseBtn.addEventListener('click', () => {
+            roomDetailsModal.style.display = 'none';
         });
 
-        // Initial render
-        initializeDefaultData();
-        updateStats();
-        renderRooms();
-        renderStudents();
-        switchMode('allocation'); // Ensure allocation mode is the initial view
+        roomDetailsModal.addEventListener('click', (e) => {
+            if (e.target === roomDetailsModal) {
+                roomDetailsModal.style.display = 'none';
+            }
+        });
+
+        // NEW: Function to handle Unallocate
+        async function unallocateStudent(studentId, roomNumber) {
+            if (!confirm(`Are you sure you want to UNALLOCATE student ${studentId} from room ${roomNumber}? This cannot be undone easily.`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/students/unallocate/${studentId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.message || 'Failed to unallocate student.');
+                }
+
+                customAlert(result.message, 'Unallocation Success', 'Success');
+                // Refresh the room details view
+                await viewRoomDetails(); 
+                await initializeData();
+
+            } catch (error) {
+                customAlert(`Unallocation failed: ${error.message}`, 'Error');
+            }
+        }
+
+        // NEW: Function to handle Delete
+        async function deleteStudent(studentId) {
+            if (!confirm(`WARNING: Are you sure you want to PERMANENTLY DELETE student ${studentId}? This action cannot be reversed.`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/students/${studentId}`, {
+                    method: 'DELETE',
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.message || 'Failed to delete student.');
+                }
+
+                customAlert(result.message, 'Student Deleted', 'Success');
+                // Refresh the room details view
+                await viewRoomDetails(); 
+                await initializeData();
+
+            } catch (error) {
+                customAlert(`Deletion failed: ${error.message}`, 'Error');
+            }
+        }
+
+
+        async function viewRoomDetails() {
+            if (!isManagerLoggedIn) return customAlert('You must be logged in as a Manager to view room details.', 'Access Denied', 'Error');
+
+            roomDetailsModal.style.display = 'flex';
+            roomDetailsContainer.innerHTML = `
+                <div class="col-span-full flex flex-col items-center justify-center py-10 text-gray-400">
+                    <i class="fas fa-circle-notch fa-spin text-4xl mb-3 text-primary"></i>
+                    <p>Fetching room and occupant data...</p>
+                </div>`;
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/room-details`);
+                const roomData = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(roomData.message || 'Failed to fetch room details.');
+                }
+                
+                roomDetailsContainer.innerHTML = '';
+
+                if (roomData.length === 0) {
+                    roomDetailsContainer.innerHTML = `<p class="col-span-full text-center text-gray-500 font-semibold py-10">No rooms found in the database.</p>`;
+                    return;
+                }
+
+                roomData.forEach(room => {
+                    const occupancy = room.currentOccupants;
+                    const capacity = room.capacity;
+                    const isFull = occupancy === capacity;
+                    
+                    // Visual indicator color
+                    let statusColor = 'bg-green-100 text-green-700 border-green-200';
+                    if (isFull) statusColor = 'bg-red-100 text-red-700 border-red-200';
+                    else if (occupancy > 0) statusColor = 'bg-blue-100 text-blue-700 border-blue-200';
+
+                    let occupantListHTML = room.occupants.map(
+                        student => `
+                        <li class="flex items-center justify-between bg-gray-50 p-2 rounded mb-1 text-sm">
+                            <div class="flex flex-col">
+                                <span class="font-medium text-gray-700">${student.name}</span>
+                                <span class="text-xs text-gray-400">ID: ${student.id}</span>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="unallocateStudent('${student.id}', '${room.roomNumber}')" class="text-xs text-blue-500 hover:text-blue-700 bg-white px-2 py-1 rounded border border-blue-200 hover:bg-blue-50 transition-colors" title="Remove student from this room">
+                                    <i class="fas fa-undo"></i> Unallocate
+                                </button>
+                                <button onclick="deleteStudent('${student.id}')" class="text-xs text-red-500 hover:text-red-700 bg-white px-2 py-1 rounded border border-red-200 hover:bg-red-50 transition-colors" title="Permanently delete student record">
+                                    <i class="fas fa-trash-alt"></i> Delete
+                                </button>
+                            </div>
+                        </li>`
+                    ).join('');
+
+                    if (occupancy === 0) {
+                        occupantListHTML = '<li class="text-sm text-gray-400 italic text-center py-2">Room is currently empty</li>';
+                    }
+
+                    const card = document.createElement('div');
+                    card.className = 'bg-white p-5 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-all';
+                    card.innerHTML = `
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h4 class="text-xl font-bold text-gray-800">${room.roomNumber}</h4>
+                                <p class="text-xs text-gray-500 uppercase tracking-wider">${room.hostelBlock}</p>
+                            </div>
+                            <span class="px-3 py-1 rounded-full text-xs font-bold border ${statusColor}">
+                                ${occupancy} / ${capacity}
+                            </span>
+                        </div>
+                        
+                        <div class="mb-3 flex gap-2">
+                             <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded capitalize"><i class="fas fa-venus-mars"></i> ${room.gender}</span>
+                        </div>
+
+                        <div class="border-t pt-3 mt-2">
+                            <p class="text-xs font-semibold text-gray-400 mb-2 uppercase">Occupants</p>
+                            <ul class="">
+                                ${occupantListHTML}
+                            </ul>
+                        </div>
+                    `;
+                    roomDetailsContainer.appendChild(card);
+                });
+
+            } catch (error) {
+                roomDetailsContainer.innerHTML = `<p class="col-span-full text-center text-red-500 font-bold py-10">Error: ${error.message}</p>`;
+            }
+        }
+
+
+        // 4. INITIALIZATION & Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            if (sessionStorage.getItem('managerToken')) {
+                setManagerUI(true);
+            } else {
+                setManagerUI(false);
+            }
+            
+            initializeData();
+            
+            document.getElementById('studentForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                addStudent();
+            });
+
+            document.getElementById('roomForm').addEventListener('submit', addRoom);
+            
+            document.getElementById('runAllocationBtn').addEventListener('click', runAllocation);
+
+            document.getElementById('mateFinderForm').addEventListener('submit', findMates);
+
+            // NEW: Room Details Button Listener
+            document.getElementById('viewRoomDetailsBtn').addEventListener('click', viewRoomDetails);
+        });
     </script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Google Translate (hidden UI) -->
+<div id="google_translate_element" style="display:none;"></div>
+
+<script>
+function setCookie(name, value, days) {
+  var expires = "";
+  if (days) {
+    var date = new Date();
+    date.setTime(date.getTime() + days*24*60*60*1000);
+    expires = "; expires=" + date.toUTCString();
+  }
+  document.cookie = name + "=" + (value || "") + expires + "; path=/";
+}
+
+function applySavedLanguage(lang) {
+  if (!lang) return;
+  var trans = "/en/" + lang;
+  setCookie("googtrans", trans, 365);
+  setCookie("googtrans", trans, 365);
+}
+
+function initGoogleTranslate() {
+  new google.translate.TranslateElement(
+    { pageLanguage: "en", autoDisplay: false },
+    "google_translate_element"
+  );
+
+  var tries = 0;
+  var poll = setInterval(function () {
+    var combo = document.querySelector(".goog-te-combo");
+    if (combo || tries > 25) {
+      clearInterval(poll);
+
+      var saved = localStorage.getItem("selectedLang") || "";
+      if (saved && combo) {
+        setTimeout(function () {
+          combo.value = saved;
+          combo.dispatchEvent(new Event("change"));
+        }, 300);
+      }
+    }
+    tries++;
+  }, 200);
+}
+
+(function () {
+  var s = document.createElement("script");
+  s.src =
+    "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
+  s.async = true;
+  document.head.appendChild(s);
+  window.googleTranslateElementInit = initGoogleTranslate;
+
+  var existing = localStorage.getItem("selectedLang");
+  if (existing) applySavedLanguage(existing);
+})();
+</script>
+
 </body>
 </html>
