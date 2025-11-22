@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SmartPG- Find Your Perfect Co-Living Space</title>
@@ -28,11 +29,27 @@
                 <li><a href="index.html" class="active">Home</a></li>
                 <!-- UPDATED LINK -->
                 <li><a href="findus.html">Find Us</a></li>
-                <li><a href="find-your-mate.html">Find Your Mate</a></li>
+                <li><a href="find-your-mate.html">Manager corner</a></li>
                 <!-- CONFIRMED LINK: This links to the food menu file -->
                 <li><a href="food-menu.html">Food</a></li>
             </ul>
         </nav>
+        <!-- language selector (visible only on home page) -->
+<div id="google_translate_wrapper" style="display:inline-block; margin-left:12px;">
+  <select id="manual-lang-select" aria-label="Select language" title="Select language"
+    style="padding:8px; border-radius:8px; border:1px solid #ddd; background:transparent;">
+    <option value="en">English</option>
+    
+    <option value="hi">हिन्दी</option>
+    <option value="bn">বাংলা</option>
+    <option value="mr">मराठी</option>
+    <option value="kn">ಕನ್ನಡ</option>
+    <option value="ta">தமிழ்</option>
+    <option value="es">Español</option>
+    <option value="fr">Français</option>
+  </select>
+</div>
+
         <div class="menu-toggle" id="mobile-menu">
             <span class="bar"></span>
             <span class="bar"></span>
@@ -45,7 +62,7 @@
         <section class="cta-section" style="background-image: url('pg.jpg');">
             <h2>New room,new Vibes,same dreams</h2>
             <p>Where instant noodles meet instant lessons of life</p>
-            <a href="findus.html" class="btn-primary large-btn">Get Started</a>
+            <a href="find-your-mate.html" class="btn-primary large-btn">Login/register</a>
         </section>
 
         <section class="features-section container">
@@ -64,7 +81,7 @@
                 <div class="feature-card">
                     <!-- Icon -->
                     <i class="fas fa-users"></i>
-                    <h3>Find Your Ideal Roommate</h3>
+                    <h3>Manager corner</h3>
                     <p>Connect with compatible living mates for a pleasant experience.</p>
                 </div>
             </a>
@@ -121,5 +138,104 @@
     </footer>
     
     <script src="script.js"></script>
+    <!-- Google Translate (hidden UI) -->
+<div id="google_translate_element" style="display:none;"></div>
+
+<script>
+function setCookie(name, value, days) {
+  var expires = "";
+  if (days) {
+    var date = new Date();
+    date.setTime(date.getTime() + days*24*60*60*1000);
+    expires = "; expires=" + date.toUTCString();
+  }
+  document.cookie = name + "=" + (value || "") + expires + "; path=/";
+}
+
+function applySavedLanguage(lang) {
+  if (!lang) return;
+  var trans = "/en/" + lang;
+  setCookie("googtrans", trans, 365);
+  setCookie("googtrans", trans, 365);
+}
+
+function initGoogleTranslate() {
+  new google.translate.TranslateElement(
+    { pageLanguage: "en", autoDisplay: false },
+    "google_translate_element"
+  );
+
+  var tries = 0;
+  var poll = setInterval(function () {
+    var combo = document.querySelector(".goog-te-combo");
+    if (combo || tries > 25) {
+      clearInterval(poll);
+      if (combo) {
+        var saved = localStorage.getItem("selectedLang") || "";
+        if (saved && combo.value !== saved) {
+          setTimeout(function () {
+            combo.value = saved;
+            combo.dispatchEvent(new Event("change"));
+          }, 300);
+        }
+
+        combo.addEventListener("change", function () {
+          var v = combo.value;
+          if (v) {
+            localStorage.setItem("selectedLang", v);
+            applySavedLanguage(v);
+          } else {
+            localStorage.removeItem("selectedLang");
+          }
+        });
+      }
+    }
+    tries++;
+  }, 200);
+}
+
+(function () {
+  var s = document.createElement("script");
+  s.src =
+    "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
+  s.async = true;
+  document.head.appendChild(s);
+  window.googleTranslateElementInit = initGoogleTranslate;
+
+  var existing = localStorage.getItem("selectedLang");
+  if (existing) applySavedLanguage(existing);
+})();
+</script>
+
+<!-- This part connects the visible dropdown to Google Translate -->
+<script>
+(function () {
+  function connect() {
+    var manual = document.getElementById("manual-lang-select");
+    var combo = document.querySelector(".goog-te-combo");
+    if (!manual || !combo) return;
+
+    var saved = localStorage.getItem("selectedLang") || "";
+    if (saved) manual.value = saved;
+
+    manual.addEventListener("change", function () {
+      var v = manual.value;
+      if (!v) return;
+      combo.value = v;
+      combo.dispatchEvent(new Event("change"));
+      localStorage.setItem("selectedLang", v);
+    });
+  }
+
+  var tries = 0;
+  var poll = setInterval(function () {
+    connect();
+    tries++;
+    if (tries > 50) clearInterval(poll);
+  }, 200);
+})();
+</script>
+
+
 </body>
 </html>
